@@ -2,15 +2,14 @@ import collectionitems.*;
 import data.database.DbManagerInitializationException;
 import data.database.MusicBandDbManager;
 import data.database.QueryExecutionException;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
@@ -27,6 +26,7 @@ public class MusicBandDbManagerTests {
             MusicBand band1 = new MusicBand();
             band1.setId(2);
             band1.setName("band1");
+            band1.setCreationDate(LocalDateTime.parse("2022-08-26T17:56:20.217787600"));
             Coordinates coordinates1 = new Coordinates();
             coordinates1.setX(1f);
             coordinates1.setY(1f);
@@ -38,6 +38,7 @@ public class MusicBandDbManagerTests {
             MusicBand band2 = new MusicBand();
             band2.setId(3);
             band2.setName("band2");
+            band2.setCreationDate(LocalDateTime.parse("2022-07-26T17:56:20.217787600"));
             Coordinates coordinates2 = new Coordinates();
             coordinates2.setX(2.05f);
             coordinates2.setY(2.948f);

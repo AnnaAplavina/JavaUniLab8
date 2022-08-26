@@ -52,7 +52,7 @@ public class MusicBandDbManager {
                     band.setCoordinates(coordinates);
 
                     String dateStr = resultSet.getString("creation_date");
-                    LocalDateTime creationDate = dateStr == null? null : LocalDateTime.parse(dateStr);
+                    LocalDateTime creationDate = LocalDateTime.parse(dateStr);
                     band.setCreationDate(creationDate);
 
                     int numberOfParticipants = resultSet.getInt("number_of_participants");

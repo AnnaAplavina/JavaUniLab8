@@ -1,9 +1,9 @@
 package data.database;
 
-import collectionitems.MusicBand;
-import collectionitems.WrongArgumentException;
+import collectionitems.*;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -60,12 +60,47 @@ public class MusicBandDbManager {
         try {
             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
             while (resultSet.next()){
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                MusicBand band = new MusicBand();
-                band.setId(id);
                 try {
+                    MusicBand band = new MusicBand();
+
+                    int id = resultSet.getInt("id");
+                    band.setId(id);
+                    String name = resultSet.getString("name");
                     band.setName(name);
+
+                    Coordinates coordinates = new Coordinates();
+                    coordinates.setX(resultSet.getFloat("x"));
+                    coordinates.setY(resultSet.getFloat("y"));
+                    band.setCoordinates(coordinates);
+
+                    String dateStr = resultSet.getString("creation_date");
+                    LocalDateTime creationDate = dateStr == null? null : LocalDateTime.parse(dateStr);
+                    band.setCreationDate(creationDate);
+
+                    int numberOfParticipants = resultSet.getInt("number_of_participants");
+                    band.setNumberOfParticipants(numberOfParticipants);
+                    long albumsCount = resultSet.getLong("albums_count");
+                    band.setAlbumsCount(albumsCount);
+                    String description = resultSet.getString("description");
+                    band.setDescription(description);
+                    String genreStr = resultSet.getString("genre");
+                    if(genreStr != null){
+                        MusicGenre genre = MusicGenre.valueOf(resultSet.getString("genre"));
+                        band.setGenre(genre);
+                    }
+
+                    String bestAlbumName = resultSet.getString("best_album_name");
+                    if(bestAlbumName != null){
+                        Album bestAlbum = new Album();
+                        bestAlbum.setName(bestAlbumName);
+                        long bestAlbumTracks = resultSet.getLong("best_album_tracks");
+                        bestAlbum.setTracks(bestAlbumTracks);
+                        Integer bestAlbumLength = resultSet.getInt("best_album_length");
+                        bestAlbum.setLength(bestAlbumLength);
+                        Float bestAlbumSales = resultSet.getFloat("best_album_sales");
+                        bestAlbum.setSales(bestAlbumSales);
+                        band.setBestAlbum(bestAlbum);
+                    }
                     bands.add(band);
                 }
                 catch (WrongArgumentException ex){

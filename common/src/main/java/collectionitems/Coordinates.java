@@ -43,4 +43,16 @@ public class Coordinates implements Serializable {
     public String toString(){
         return "x=" + x + " y=" + y;
     }
+
+    @Override
+    public boolean equals(Object anotherObject){
+        if(anotherObject == null){
+            return false;
+        }
+        if(!(anotherObject instanceof Coordinates)){
+            return false;
+        }
+        Coordinates otherCoordinates = (Coordinates) anotherObject;
+        return Math.abs(x - otherCoordinates.x) < 0.001 && Math.abs(y - otherCoordinates.y) < 0.001;
+    }
 }

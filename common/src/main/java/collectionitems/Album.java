@@ -72,4 +72,20 @@ public class Album implements Serializable {
     public String toString(){
         return name + " | " + tracks + " tracks" + " | " + length + " length" + " | " + sales + " sales";
     }
+
+    @Override
+    public boolean equals(Object otherObj){
+        if(otherObj == null){
+            return false;
+        }
+        if(!(otherObj instanceof Album)){
+            return false;
+        }
+        Album otherAlbum = (Album) otherObj;
+        boolean equalName = name.equals(otherAlbum.getName());
+        boolean equalTracks = tracks == otherAlbum.getTracks();
+        boolean equalLength = length.equals(otherAlbum.length);
+        boolean equalSales = sales.equals(otherAlbum.getSales());
+        return equalName && equalTracks && equalLength && equalSales;
+    }
 }

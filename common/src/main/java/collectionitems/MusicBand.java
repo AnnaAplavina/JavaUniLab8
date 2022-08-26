@@ -147,4 +147,42 @@ public class MusicBand implements Serializable, Comparable<MusicBand> {
         }
         return -1;
     }
+
+    @Override
+    public boolean equals(Object anotherObject){
+        if(anotherObject == this){
+            return true;
+        }
+        if(!(anotherObject instanceof MusicBand)){
+            return false;
+        }
+        MusicBand otherBand = (MusicBand) anotherObject;
+        boolean equalCoordinates = coordinates.equals(otherBand.coordinates);
+        boolean equalName = name.equals(otherBand.name);
+        boolean equalNumberOfParticipants = numberOfParticipants == otherBand.getNumberOfParticipants();
+        boolean equalAlbumsCount = albumsCount == otherBand.getAlbumsCount();
+        boolean equalDescription = false;
+        if(description == null && otherBand.getDescription() == null){
+            equalDescription = true;
+        }
+        else if(description.equals(otherBand.getDescription())){
+            equalDescription = true;
+        }
+        boolean equalGenre = false;
+        if(genre == null && otherBand.getGenre() == null){
+            equalGenre = true;
+        }
+        else if(genre.equals(otherBand.getGenre())){
+            equalGenre = true;
+        }
+        boolean equalBestAlbum = false;
+        if(bestAlbum == null && otherBand.bestAlbum == null){
+            equalBestAlbum = true;
+        }
+        else if(bestAlbum.equals(otherBand.getBestAlbum())){
+            equalBestAlbum = true;
+        }
+        return equalCoordinates && equalName && equalNumberOfParticipants && equalAlbumsCount &&
+                equalDescription && equalGenre && equalBestAlbum;
+    }
 }

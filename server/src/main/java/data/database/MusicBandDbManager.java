@@ -10,30 +10,8 @@ import java.util.logging.Logger;
 
 public class MusicBandDbManager {
     private static final Logger logger = Logger.getLogger(MusicBandDbManager.class.getName());
-//    public String testConnection(){
-//        try{
-//            Class.forName("org.postgresql.Driver");
-//        }
-//        catch (ClassNotFoundException ex){
-//            ex.printStackTrace();
-//        }
-//        String res = "";
-//        try{
-//            Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/studs",
-//                    "s264432", "ajf870");
-//            Statement statement = connection.createStatement();
-//            ResultSet resultSet = statement.executeQuery("SELECT str_field FROM test_table");
-//            while (resultSet.next()){
-//                res+= resultSet.getString("str_field");
-//            }
-//        }
-//        catch (SQLException ex){
-//            ex.printStackTrace();
-//        }
-//        return res;
-//    }
 
-    private Statement statement;
+    private final Statement statement;
     private final String tableName;
 
     public MusicBandDbManager(String url, String login, String password, String tableName) throws DbManagerInitializationException {

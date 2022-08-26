@@ -179,7 +179,7 @@ public class MusicBand implements Serializable, Comparable<MusicBand> {
         if(bestAlbum == null && otherBand.bestAlbum == null){
             equalBestAlbum = true;
         }
-        else if(bestAlbum.equals(otherBand.getBestAlbum())){
+        else if(bestAlbum != null && bestAlbum.equals(otherBand.getBestAlbum())){
             equalBestAlbum = true;
         }
         return equalCoordinates && equalName && equalNumberOfParticipants && equalAlbumsCount &&

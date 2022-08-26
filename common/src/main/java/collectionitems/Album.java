@@ -84,7 +84,10 @@ public class Album implements Serializable {
         Album otherAlbum = (Album) otherObj;
         boolean equalName = name.equals(otherAlbum.getName());
         boolean equalTracks = tracks == otherAlbum.getTracks();
-        boolean equalLength = length.equals(otherAlbum.length);
+        boolean equalLength = length == null && otherAlbum.getLength() == null;
+        if(length != null && length.equals(otherAlbum.getLength())){
+            equalLength = true;
+        }
         boolean equalSales = sales.equals(otherAlbum.getSales());
         return equalName && equalTracks && equalLength && equalSales;
     }

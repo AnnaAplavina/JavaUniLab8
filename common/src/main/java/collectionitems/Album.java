@@ -31,7 +31,7 @@ public class Album implements Serializable {
     }
 
     public Album(){
-        name="deafault";
+        name="default";
         tracks = 1;
         length = null;
         sales = 1F;

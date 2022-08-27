@@ -1,8 +1,6 @@
 package data.database;
 
 import collectionitems.*;
-
-import java.lang.reflect.Type;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -134,6 +132,15 @@ public class MusicBandDao {
         catch (SQLException ex){
             logger.info("Could no add new music band to database\n" + ex.getMessage());
             throw new QueryExecutionException("Could no add new music band to database\n" + ex.getMessage());
+        }
+    }
+
+    public void removeBandById(int id) throws QueryExecutionException {
+        try {
+            statement.executeQuery("DELETE FROM " + tableName + " WHERE id=" + id);
+        } catch (SQLException ex) {
+            logger.info("Could not remove band from db\n" + ex.getMessage());
+            throw new QueryExecutionException("Could not remove band from db\n" + ex.getMessage());
         }
     }
 }

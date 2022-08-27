@@ -52,7 +52,7 @@ public class MusicBandServer {
                         System.out.println("Client connected " + channel);
                     }
                     else{
-                            MusicBandCommand command = commandsReader.readCommand((SocketChannel) k.channel());
+                            MusicBandRequest command = commandsReader.readCommand((SocketChannel) k.channel());
                         try{
                                 MusicBandResponse response = commandsExecutor.executeCommand(command);
                                 ResponseSender.sendResponse(response, (SocketChannel) k.channel());

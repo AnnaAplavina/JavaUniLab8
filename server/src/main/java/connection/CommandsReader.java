@@ -17,7 +17,7 @@ public class CommandsReader {
         buffer = ByteBuffer.allocate(1024);
     }
 
-    public MusicBandCommand readCommand(SocketChannel channel) throws IOException, ClassNotFoundException {
+    public MusicBandRequest readCommand(SocketChannel channel) throws IOException, ClassNotFoundException {
         channel.read(buffer);
         buffer.flip();
         byte[] array = new byte[buffer.remaining()];
@@ -27,7 +27,7 @@ public class CommandsReader {
         DataInputStream dataInputStream = new DataInputStream(bis);
         ObjectInputStream ois = new ObjectInputStream(dataInputStream);
         Object readObject = ois.readObject();
-        MusicBandCommand command = (MusicBandCommand) readObject;
+        MusicBandRequest command = (MusicBandRequest) readObject;
         logger.info("Received: " + command.name + " From client: " + channel);
         System.out.println("Received: " + command.name + " From client: " + channel);
         return command;

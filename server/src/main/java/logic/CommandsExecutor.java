@@ -2,7 +2,7 @@ package logic;
 
 import collectionitems.MusicBand;
 import collectionitems.WrongArgumentException;
-import connection.MusicBandCommand;
+import connection.MusicBandRequest;
 import connection.MusicBandResponse;
 import connection.ResponseStatus;
 import data.CollectionManager;
@@ -17,7 +17,7 @@ public class CommandsExecutor {
         collectionManager = manager;
     }
 
-    public MusicBandResponse executeCommand(MusicBandCommand command) throws IOException{
+    public MusicBandResponse executeCommand(MusicBandRequest command) throws IOException{
         Command executableCommand = getCommandObject(command);
         MusicBandResponse response = new MusicBandResponse();
         try {
@@ -33,7 +33,7 @@ public class CommandsExecutor {
     }
 
 
-    private Command getCommandObject(MusicBandCommand command){
+    private Command getCommandObject(MusicBandRequest command){
         if(command == null){
             return null;
         }

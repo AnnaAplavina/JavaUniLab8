@@ -4,7 +4,7 @@ import collectionitems.MusicBand;
 
 import java.io.Serializable;
 
-public class MusicBandCommand implements Serializable {
+public class MusicBandRequest implements Serializable {
     public String name = null;
     public String arg = null;
     public MusicBand band = null;

@@ -3,13 +3,7 @@ package connection;
 import collectionitems.MusicBand;
 
 import java.io.*;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.SocketChannel;
-import java.util.Iterator;
 
 public class MusicBandConnection implements Closeable {
     private Socket socket;
@@ -19,26 +13,26 @@ public class MusicBandConnection implements Closeable {
     }
 
     public String sendCommand(String command) throws IOException, ClassNotFoundException, InterruptedException {
-        MusicBandCommand musicBandCommand = new MusicBandCommand();
-        musicBandCommand.name = command;
-        sendToServer(musicBandCommand);
+        MusicBandRequest musicBandRequest = new MusicBandRequest();
+        musicBandRequest.name = command;
+        sendToServer(musicBandRequest);
         return getResponseString(getResponse());
     }
 
     public String sendCommand(String command, String arg) throws IOException, ClassNotFoundException {
-        MusicBandCommand musicBandCommand = new MusicBandCommand();
-        musicBandCommand.name = command;
-        musicBandCommand.arg = arg;
-        sendToServer(musicBandCommand);
+        MusicBandRequest musicBandRequest = new MusicBandRequest();
+        musicBandRequest.name = command;
+        musicBandRequest.arg = arg;
+        sendToServer(musicBandRequest);
         return getResponseString(getResponse());
     }
 
     public String sendCommand(String command, String arg, MusicBand band) throws IOException, ClassNotFoundException {
-        MusicBandCommand musicBandCommand = new MusicBandCommand();
-        musicBandCommand.name = command;
-        musicBandCommand.arg = arg;
-        musicBandCommand.band = band;
-        sendToServer(musicBandCommand);
+        MusicBandRequest musicBandRequest = new MusicBandRequest();
+        musicBandRequest.name = command;
+        musicBandRequest.arg = arg;
+        musicBandRequest.band = band;
+        sendToServer(musicBandRequest);
         return getResponseString(getResponse());
     }
 
@@ -47,10 +41,10 @@ public class MusicBandConnection implements Closeable {
 
     }
 
-    private void sendToServer(MusicBandCommand musicBandCommand) throws IOException {
+    private void sendToServer(MusicBandRequest musicBandRequest) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ObjectOutputStream ous = new ObjectOutputStream(byteArrayOutputStream);
-        ous.writeObject(musicBandCommand);
+        ous.writeObject(musicBandRequest);
         ous.flush();
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());

@@ -3,6 +3,7 @@ package logic.commands;
 import collectionitems.MusicBand;
 import collectionitems.WrongArgumentException;
 import data.CollectionManager;
+import data.database.QueryExecutionException;
 
 import java.io.IOException;
 
@@ -29,7 +30,11 @@ public class InsertAtCommand implements Command
             }
             int index = Integer.parseInt(arg);
             if(index >= 0) {
-                manager.addNewElementFromUser(index, band);
+                try {
+                    manager.addNewElementFromUser(index, band);
+                } catch (QueryExecutionException e) {
+                    throw new WrongArgumentException("Error when working with db!");
+                }
             }
             else{
                 throw new WrongArgumentException("Index must be a positive integer");

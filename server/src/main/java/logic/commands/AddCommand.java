@@ -3,6 +3,7 @@ package logic.commands;
 import collectionitems.MusicBand;
 import collectionitems.WrongArgumentException;
 import data.CollectionManager;
+import data.database.QueryExecutionException;
 
 import java.io.IOException;
 
@@ -23,7 +24,11 @@ public class AddCommand implements Command{
         if(band == null){
             throw new WrongArgumentException("Band can not be null");
         }
-        manager.addNewElementFromUser(band);
+        try {
+            manager.addNewElementFromUser(band);
+        } catch (QueryExecutionException e) {
+            throw new WrongArgumentException("Error when working with db!");
+        }
         return "Added new band";
     }
 }

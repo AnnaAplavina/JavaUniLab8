@@ -3,6 +3,7 @@ package logic.commands;
 import collectionitems.MusicBand;
 import collectionitems.WrongArgumentException;
 import data.CollectionManager;
+import data.database.QueryExecutionException;
 
 import java.io.IOException;
 
@@ -24,9 +25,13 @@ public class InsertIfMaxCommand implements Command{
         if(band == null){
             throw new WrongArgumentException("Band can not be null");
         }
-        if(manager.addIfMax(band)){
-                return "Added new max element";
-            }
+        try {
+            if(manager.addIfMax(band)){
+                    return "Added new max element";
+                }
+        } catch (QueryExecutionException e) {
+            throw new WrongArgumentException("Error when working with db!");
+        }
         return "Provided element is not max element";
     }
 }

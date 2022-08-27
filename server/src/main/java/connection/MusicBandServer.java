@@ -79,7 +79,7 @@ public class MusicBandServer {
         if(System.in.available() > 0){
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             if(reader.readLine().equals("save")){
-                collectionManager.saveCollection();
+                System.out.println("Save is no longer available!");
             }
         }
     }

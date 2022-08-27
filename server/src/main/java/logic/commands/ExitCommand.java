@@ -17,7 +17,6 @@ public class ExitCommand implements Command{
 
     @Override
     public String execute() throws WrongArgumentException, IOException {
-        manager.saveCollection();
         return "Exiting program";
     }
 }

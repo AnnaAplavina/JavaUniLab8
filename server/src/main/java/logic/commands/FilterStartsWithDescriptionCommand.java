@@ -22,7 +22,6 @@ public class FilterStartsWithDescriptionCommand implements Command {
 
     @Override
     public String execute() throws IOException, WrongArgumentException {
-        MusicGenre musicGenre;
         if(arg == null){
             throw new WrongArgumentException("Specify the genre please");
         }

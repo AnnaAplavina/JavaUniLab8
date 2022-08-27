@@ -1,6 +1,8 @@
 package logic.commands;
 
+import collectionitems.WrongArgumentException;
 import data.CollectionManager;
+import data.database.QueryExecutionException;
 
 /**
  * This command clears the collection
@@ -13,8 +15,12 @@ public class ClearCommand implements Command{
     }
 
     @Override
-    public String execute(){
-        collectionManager.clearCollection();
+    public String execute() throws WrongArgumentException {
+        try {
+            collectionManager.clearCollection();
+        } catch (QueryExecutionException e) {
+            throw new WrongArgumentException("Error when working with db!");
+        }
         return "Cleared collection";
     }
 }

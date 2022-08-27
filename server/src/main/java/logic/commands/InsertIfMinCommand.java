@@ -3,6 +3,7 @@ package logic.commands;
 import collectionitems.MusicBand;
 import collectionitems.WrongArgumentException;
 import data.CollectionManager;
+import data.database.QueryExecutionException;
 
 import java.io.IOException;
 
@@ -24,8 +25,12 @@ public class InsertIfMinCommand implements Command{
         if(band == null){
             throw new WrongArgumentException("Band can not be null");
         }
-        if(manager.addIfMin(band)){
-            return "Added new min element";
+        try {
+            if(manager.addIfMin(band)){
+                return "Added new min element";
+            }
+        } catch (QueryExecutionException e) {
+            throw new WrongArgumentException("Error when working with db!");
         }
         return "Provided element is not min element";
     }

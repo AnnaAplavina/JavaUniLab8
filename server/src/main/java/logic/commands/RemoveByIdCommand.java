@@ -2,6 +2,7 @@ package logic.commands;
 
 import collectionitems.WrongArgumentException;
 import data.CollectionManager;
+import data.database.QueryExecutionException;
 
 /**
  * This command is for removing the band with a particular id from collection
@@ -25,7 +26,11 @@ public class RemoveByIdCommand implements Command {
             if(id <= 0){
                 throw new WrongArgumentException("id must be greater than 0");
             }
-            collectionManager.removeElementById(id);
+            try {
+                collectionManager.removeElementById(id);
+            } catch (QueryExecutionException e) {
+                throw new WrongArgumentException("Error when working with db!");
+            }
         }
         catch (NumberFormatException ex){
             throw new WrongArgumentException("id must be an integer");

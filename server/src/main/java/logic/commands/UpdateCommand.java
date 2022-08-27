@@ -3,6 +3,7 @@ package logic.commands;
 import collectionitems.MusicBand;
 import collectionitems.WrongArgumentException;
 import data.CollectionManager;
+import data.database.QueryExecutionException;
 
 import java.io.IOException;
 
@@ -33,7 +34,11 @@ public class UpdateCommand implements Command {
             if(id <= 0){
                 throw new WrongArgumentException("Id must be greater than 0");
             }
-            manager.changeElementFromUser(id, band);
+            try {
+                manager.changeElementFromUser(id, band);
+            } catch (QueryExecutionException e) {
+                throw new WrongArgumentException("Error when working with db!");
+            }
         }
         catch (NumberFormatException ex){
             throw new WrongArgumentException("Id must be an integer");

@@ -17,7 +17,6 @@ public class SaveCommand implements Command{
 
     @Override
     public String execute() throws IOException, WrongArgumentException {
-        collectionManager.saveCollection();
-        return "Saved";
+        return "Save command no longer available";
     }
 }

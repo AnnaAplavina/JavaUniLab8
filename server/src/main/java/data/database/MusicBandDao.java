@@ -26,6 +26,7 @@ public class MusicBandDao {
             this.connection = DriverManager.getConnection(url, login, password);
             statement = connection.createStatement();
             this.tableName = tableName;
+            createTableIfNotExists();
         }
         catch (SQLException ex){
             logger.info("Could not initialize MusicBandDbManager \n" + ex.getMessage());
@@ -99,13 +100,13 @@ public class MusicBandDao {
                 "(name,x,y," +
                 "creation_date,number_of_participants,albums_count,description," +
                 "genre,best_album_name,best_album_tracks,best_album_length,best_album_sales)"+
-                "VALUES(?,?,?,?,?,?,?,?::genre,?,?,?,?)";
+                "VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
         try{
             PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, band.getName());
             preparedStatement.setFloat(2, band.getCoordinates().getX());
             preparedStatement.setFloat(3, band.getCoordinates().getY());
-            preparedStatement.setString(4, band.getCreationDate().toString());
+            preparedStatement.setDate(4, Date.valueOf(band.getCreationDate().toLocalDate()));
             preparedStatement.setInt(5, band.getNumberOfParticipants());
             preparedStatement.setLong(6, band.getAlbumsCount());
             preparedStatement.setString(7, band.getDescription());
@@ -154,7 +155,7 @@ public class MusicBandDao {
             preparedStatement.setString(1, band.getName());
             preparedStatement.setFloat(2, band.getCoordinates().getX());
             preparedStatement.setFloat(3, band.getCoordinates().getY());
-            preparedStatement.setString(4, band.getCreationDate().toString());
+            preparedStatement.setDate(4, Date.valueOf(band.getCreationDate().toLocalDate()));
             preparedStatement.setInt(5, band.getNumberOfParticipants());
             preparedStatement.setLong(6, band.getAlbumsCount());
             preparedStatement.setString(7, band.getDescription());
@@ -188,10 +189,30 @@ public class MusicBandDao {
         try{
             String query = "DELETE FROM " + tableName;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.executeUpdate();
         }
         catch (SQLException ex){
             logger.info("Could no add new music band to database\n" + ex.getMessage());
             throw new QueryExecutionException("Could not clear the table" + ex.getMessage());
         }
+    }
+
+    private void createTableIfNotExists() throws SQLException {
+        String query = "CREATE TABLE IF NOT EXISTS " + tableName +
+                "(id SERIAL PRIMARY KEY NOT NULL," +
+                "name TEXT NOT NULL," +
+                "x FLOAT(24) NOT NULL," +
+                "y FLOAT(24) NOT NULL," +
+                "creation_date DATE NOT NULL," +
+                "number_of_participants INT NOT NULL," +
+                "albums_count INT NOT NULL," +
+                "description TEXT," +
+                "genre TEXT," +
+                "best_album_name TEXT," +
+                "best_album_tracks INT," +
+                "best_album_length INT," +
+                "best_album_sales FLOAT(24))";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.executeUpdate();
     }
 }

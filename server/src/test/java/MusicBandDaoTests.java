@@ -2,14 +2,10 @@ import collectionitems.*;
 import data.database.DaoInitializationException;
 import data.database.MusicBandDao;
 import data.database.QueryExecutionException;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +20,7 @@ public class MusicBandDaoTests {
     public void init(){
         try{
             musicBandDao = new MusicBandDao("jdbc:postgresql://localhost:5432/studs",
-                    "s264432", "ajf870", "test_prog_musicband_264432");
+                    "s264432", "ajf870", "test_table1");
             allBands = new ArrayList<>();
             MusicBand band1 = new MusicBand();
             band1.setId(2);

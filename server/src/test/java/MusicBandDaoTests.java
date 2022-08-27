@@ -1,6 +1,6 @@
 import collectionitems.*;
 import data.database.DaoInitializationException;
-import data.database.MusicBandDao;
+import data.database.bands.MusicBandDao;
 import data.database.QueryExecutionException;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @RunWith(JUnit4.class)
 public class MusicBandDaoTests {
@@ -55,7 +56,7 @@ public class MusicBandDaoTests {
             allBands.add(band2);
         }
         catch (DaoInitializationException | WrongArgumentException ex){
-            ex.printStackTrace();
+            fail(ex.getMessage());
         }
     }
 
@@ -65,7 +66,7 @@ public class MusicBandDaoTests {
             assertEquals(allBands, musicBandDao.getBandsFromDb());
         }
         catch (QueryExecutionException ex){
-            ex.printStackTrace();
+            fail(ex.getMessage());
         }
     }
 
@@ -78,8 +79,8 @@ public class MusicBandDaoTests {
             allBands.add(band);
             assertEquals(allBands, musicBandDao.getBandsFromDb());
         }
-        catch (QueryExecutionException | WrongArgumentException exception){
-            exception.printStackTrace();
+        catch (QueryExecutionException | WrongArgumentException ex){
+            fail(ex.getMessage());
         }
     }
 }

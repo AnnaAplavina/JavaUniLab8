@@ -1,6 +1,9 @@
-package data.database;
+package data.database.bands;
 
 import collectionitems.*;
+import data.database.DaoInitializationException;
+import data.database.QueryExecutionException;
+
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,8 +32,8 @@ public class MusicBandDao {
             createTableIfNotExists();
         }
         catch (SQLException ex){
-            logger.info("Could not initialize MusicBandDbManager \n" + ex.getMessage());
-            throw new DaoInitializationException("Could not initialize MusicBandDbManager \n" + ex.getMessage());
+            logger.info("Could not initialize MusicBandDao \n" + ex.getMessage());
+            throw new DaoInitializationException("Could not initialize MusicBandDao \n" + ex.getMessage());
         }
     }
 

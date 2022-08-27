@@ -3,7 +3,7 @@ package data;
 import collectionitems.MusicBand;
 import collectionitems.MusicGenre;
 import collectionitems.WrongArgumentException;
-import data.database.MusicBandDao;
+import data.database.bands.MusicBandDao;
 import data.database.QueryExecutionException;
 
 import java.io.ByteArrayOutputStream;

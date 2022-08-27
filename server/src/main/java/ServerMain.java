@@ -1,8 +1,7 @@
 import connection.MusicBandServer;
 import data.CollectionManager;
-import data.DataManager;
 import data.database.DaoInitializationException;
-import data.database.MusicBandDao;
+import data.database.bands.MusicBandDao;
 import data.database.QueryExecutionException;
 import logic.CommandsExecutor;
 

@@ -8,19 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class MusicBandDbManager {
-    private static final Logger logger = Logger.getLogger(MusicBandDbManager.class.getName());
+public class MusicBandDao {
+    private static final Logger logger = Logger.getLogger(MusicBandDao.class.getName());
 
     private final Statement statement;
     private final String tableName;
 
-    public MusicBandDbManager(String url, String login, String password, String tableName) throws DbManagerInitializationException {
+    public MusicBandDao(String url, String login, String password, String tableName) throws DaoInitializationException {
         try{
             Class.forName("org.postgresql.Driver");
         }
         catch (ClassNotFoundException ex){
             logger.info("Could not load the driver \n" + ex.getMessage());
-            throw new DbManagerInitializationException("Could not load the driver \n" + ex.getMessage());
+            throw new DaoInitializationException("Could not load the driver \n" + ex.getMessage());
         }
         try {
             Connection connection = DriverManager.getConnection(url, login, password);
@@ -29,7 +29,7 @@ public class MusicBandDbManager {
         }
         catch (SQLException ex){
             logger.info("Could not initialize MusicBandDbManager \n" + ex.getMessage());
-            throw new DbManagerInitializationException("Could not initialize MusicBandDbManager \n" + ex.getMessage());
+            throw new DaoInitializationException("Could not initialize MusicBandDbManager \n" + ex.getMessage());
         }
     }
 

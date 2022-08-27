@@ -1,6 +1,6 @@
 import collectionitems.*;
-import data.database.DbManagerInitializationException;
-import data.database.MusicBandDbManager;
+import data.database.DaoInitializationException;
+import data.database.MusicBandDao;
 import data.database.QueryExecutionException;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,14 +13,14 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
-public class MusicBandDbManagerTests {
-    private MusicBandDbManager musicBandDbManager;
+public class MusicBandDaoTests {
+    private MusicBandDao musicBandDao;
     private List<MusicBand> allBands;
 
     @Before
     public void init(){
         try{
-            musicBandDbManager = new MusicBandDbManager("jdbc:postgresql://localhost:5432/studs",
+            musicBandDao = new MusicBandDao("jdbc:postgresql://localhost:5432/studs",
                     "s264432", "ajf870", "test_prog_musicband_264432");
             allBands = new ArrayList<>();
             MusicBand band1 = new MusicBand();
@@ -55,7 +55,7 @@ public class MusicBandDbManagerTests {
             band2.setBestAlbum(bestAlbum2);
             allBands.add(band2);
         }
-        catch (DbManagerInitializationException | WrongArgumentException ex){
+        catch (DaoInitializationException | WrongArgumentException ex){
             ex.printStackTrace();
         }
     }
@@ -63,7 +63,7 @@ public class MusicBandDbManagerTests {
     @Test
     public void testGetBandsFromDb(){
         try{
-            assertEquals(allBands, musicBandDbManager.getBandsFromDb());
+            assertEquals(allBands, musicBandDao.getBandsFromDb());
         }
         catch (QueryExecutionException ex){
             ex.printStackTrace();

@@ -183,4 +183,15 @@ public class MusicBandDao {
             throw new QueryExecutionException("Could no add new music band to database\n" + ex.getMessage());
         }
     }
+
+    public void clear() throws QueryExecutionException {
+        try{
+            String query = "DELETE FROM " + tableName;
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+        }
+        catch (SQLException ex){
+            logger.info("Could no add new music band to database\n" + ex.getMessage());
+            throw new QueryExecutionException("Could not clear the table" + ex.getMessage());
+        }
+    }
 }

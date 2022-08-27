@@ -3,13 +3,14 @@ package data;
 import collectionitems.MusicBand;
 import collectionitems.MusicGenre;
 import collectionitems.WrongArgumentException;
+import data.database.MusicBandDao;
+import data.database.QueryExecutionException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -18,18 +19,16 @@ import java.util.stream.Collectors;
 public class CollectionManager {
     private final Date initializationDate;
     private Vector<MusicBand> collection;
-    private final DataManager dataManager;
-    private final Set<Integer> IDs;
+    private final MusicBandDao musicBandDao;
 
-    public CollectionManager(DataManager dataManager) throws IOException {
+    public CollectionManager(MusicBandDao musicBandDao) throws QueryExecutionException {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         initializationDate = new Date();
         formatter.format(initializationDate);
-        this.dataManager = dataManager;
-        collection = dataManager.getCollection();
+        this.musicBandDao = musicBandDao;
+        collection = new Vector<>();
+        collection.addAll(musicBandDao.getBandsFromDb());
         sortCollectionBySize();
-        IDs = new HashSet<>();
-        collection.forEach(band -> IDs.add(band.getId()));
     }
 
     /**
@@ -63,10 +62,8 @@ public class CollectionManager {
     /**
      * reads new band from user
      */
-    public void addNewElementFromUser(MusicBand band){
-        int newId = generateNewId();
-        band.setId(newId);
-        IDs.add(newId);
+    public void addNewElementFromUser(MusicBand band) throws QueryExecutionException {
+        musicBandDao.addBandToDb(band);
         collection.add(band);
         sortCollectionBySize();
     }
@@ -76,14 +73,11 @@ public class CollectionManager {
      * @param index index where new element is supposed to be
      * @throws ArrayIndexOutOfBoundsException given index is out of bounds
      */
-    public void addNewElementFromUser(int index, MusicBand band) throws ArrayIndexOutOfBoundsException
-    {
+    public void addNewElementFromUser(int index, MusicBand band) throws ArrayIndexOutOfBoundsException, QueryExecutionException {
         if(index >= collection.size()){
             throw new ArrayIndexOutOfBoundsException();
         }
-        int newId = generateNewId();
-        band.setId(newId);
-        IDs.add(newId);
+        musicBandDao.addBandToDb(band);
         collection.add(index, band);
         sortCollectionBySize();
     }
@@ -107,11 +101,12 @@ public class CollectionManager {
      * @param id if of the band
      * @throws WrongArgumentException id was incorrect(element with such id does not exist)
      */
-    public void removeElementById(int id) throws WrongArgumentException{
+    public void removeElementById(int id) throws WrongArgumentException, QueryExecutionException {
         MusicBand band = findElementById(id);
         if(band == null){
             throw new WrongArgumentException("no element with such id");
         }
+        musicBandDao.removeBandById(id);
         collection.removeElement(band);
         sortCollectionBySize();
     }
@@ -121,11 +116,12 @@ public class CollectionManager {
      * @param id id of the element
      * @throws WrongArgumentException id was incorrect(element with such id does not exist)
      */
-    public void changeElementFromUser(int id, MusicBand band) throws WrongArgumentException{
+    public void changeElementFromUser(int id, MusicBand band) throws WrongArgumentException, QueryExecutionException {
         MusicBand oldBand = findElementById(id);
         if(oldBand == null){
             throw new WrongArgumentException("no element with such id");
         }
+        musicBandDao.changeBandById(id, band);
         collection.removeElement(band);
         band.setId(id);
         collection.add(band);
@@ -135,17 +131,9 @@ public class CollectionManager {
     /**
      * clears the collection
      */
-    public void clearCollection(){
+    public void clearCollection() throws QueryExecutionException {
+        musicBandDao.clear();
         collection = new Vector<>();
-    }
-
-    /**
-     * save the collection to the file
-     * @throws IOException could not write collection to file
-     */
-    public void saveCollection() throws IOException {
-        dataManager.saveCollection(collection);
-        System.out.println("Saving collection");
     }
 
     /**
@@ -176,18 +164,18 @@ public class CollectionManager {
      * add new element to collection if it is the max element
      * @return true if successfully added, otherwise false
      */
-    public boolean addIfMax(MusicBand newBand){
+    public boolean addIfMax(MusicBand newBand) throws QueryExecutionException {
         try {
             MusicBand maxBand;
             maxBand = getMax();
             if(newBand.compareTo(maxBand) > 0){
-                newBand.setId(generateNewId());
+                musicBandDao.addBandToDb(newBand);
                 collection.add(newBand);
                 sortCollectionBySize();
                 return true;
             }
         } catch (EmptyCollectionException e) {
-            newBand.setId(generateNewId());
+            musicBandDao.addBandToDb(newBand);
             collection.add(newBand);
             return true;
         }
@@ -198,18 +186,18 @@ public class CollectionManager {
      * add new element to collection if it is the min element
      * @return true if successfully added, otherwise false
      */
-    public boolean addIfMin(MusicBand newBand){
+    public boolean addIfMin(MusicBand newBand) throws QueryExecutionException {
         try {
             MusicBand minBand;
             minBand = getMin();
             if(newBand.compareTo(minBand) < 0){
-                newBand.setId(generateNewId());
+                musicBandDao.addBandToDb(newBand);
                 collection.add(newBand);
                 sortCollectionBySize();
                 return true;
             }
         } catch (EmptyCollectionException e) {
-            newBand.setId(generateNewId());
+            musicBandDao.addBandToDb(newBand);
             collection.add(newBand);
             return true;
         }
@@ -243,10 +231,6 @@ public class CollectionManager {
         List<MusicBand> res = new ArrayList<>(collection);
         res.sort(MusicBand::compareTo);
         return res;
-    }
-
-    private int generateNewId(){
-        return IDs.stream().max(Integer::compareTo).isPresent() ? IDs.stream().max(Integer::compareTo).get()+1 : 1;
     }
 
     private void sortCollectionBySize(){

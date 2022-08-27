@@ -69,4 +69,18 @@ public class MusicBandDaoTests {
             ex.printStackTrace();
         }
     }
+
+    @Test
+    public void addBandToDbTest(){
+        try {
+            MusicBand band = new MusicBand();
+            band.setName("Added Band");
+            musicBandDao.addBandToDb(band);
+            allBands.add(band);
+            assertEquals(allBands, musicBandDao.getBandsFromDb());
+        }
+        catch (QueryExecutionException | WrongArgumentException exception){
+            exception.printStackTrace();
+        }
+    }
 }

@@ -2,6 +2,7 @@ package data.database;
 
 import collectionitems.*;
 
+import java.lang.reflect.Type;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public class MusicBandDao {
     private static final Logger logger = Logger.getLogger(MusicBandDao.class.getName());
 
     private final Statement statement;
+    private final Connection connection;
     private final String tableName;
 
     public MusicBandDao(String url, String login, String password, String tableName) throws DaoInitializationException {
@@ -23,7 +25,7 @@ public class MusicBandDao {
             throw new DaoInitializationException("Could not load the driver \n" + ex.getMessage());
         }
         try {
-            Connection connection = DriverManager.getConnection(url, login, password);
+            this.connection = DriverManager.getConnection(url, login, password);
             statement = connection.createStatement();
             this.tableName = tableName;
         }
@@ -92,5 +94,46 @@ public class MusicBandDao {
                     e.getMessage());
         }
         return bands;
+    }
+
+    public void addBandToDb(MusicBand band) throws QueryExecutionException {
+        String query = "INSERT INTO " + tableName +
+                "(name,x,y," +
+                "creation_date,number_of_participants,albums_count,description," +
+                "genre,best_album_name,best_album_tracks,best_album_length,best_album_sales)"+
+                "VALUES(?,?,?,?,?,?,?,?::genre,?,?,?,?)";
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, band.getName());
+            preparedStatement.setFloat(2, band.getCoordinates().getX());
+            preparedStatement.setFloat(3, band.getCoordinates().getY());
+            preparedStatement.setString(4, band.getCreationDate().toString());
+            preparedStatement.setInt(5, band.getNumberOfParticipants());
+            preparedStatement.setLong(6, band.getAlbumsCount());
+            preparedStatement.setString(7, band.getDescription());
+            if(band.getGenre() != null){
+                preparedStatement.setString(8, band.getGenre().toString());
+            }
+            else{
+                preparedStatement.setNull(8, Types.VARCHAR);
+            }
+            if(band.getBestAlbum() != null){
+                preparedStatement.setString(9, band.getBestAlbum().getName());
+                preparedStatement.setFloat(10, band.getBestAlbum().getTracks());
+                preparedStatement.setInt(11, band.getBestAlbum().getLength());
+                preparedStatement.setFloat(12, band.getBestAlbum().getSales());
+            }
+            else {
+                preparedStatement.setNull(9, Types.VARCHAR);
+                preparedStatement.setNull(10, Types.FLOAT);
+                preparedStatement.setNull(11, Types.INTEGER);
+                preparedStatement.setNull(12, Types.FLOAT);
+            }
+            preparedStatement.executeUpdate();
+        }
+        catch (SQLException ex){
+            logger.info("Could no add new music band to database\n" + ex.getMessage());
+            throw new QueryExecutionException("Could no add new music band to database\n" + ex.getMessage());
+        }
     }
 }

@@ -64,7 +64,6 @@ public class CollectionManager {
      */
     public void addNewElementFromUser(MusicBand band, String username) throws QueryExecutionException {
         musicBandDao.addBandToDb(band, username);
-        collection.add(band);
         sortCollectionBySize();
     }
 

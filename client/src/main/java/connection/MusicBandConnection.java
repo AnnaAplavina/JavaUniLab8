@@ -7,13 +7,25 @@ import java.net.Socket;
 
 public class MusicBandConnection implements Closeable {
     private Socket socket;
+    private String username;
+    private String password;
 
     public MusicBandConnection(String ip, int port) throws IOException {
         socket = new Socket(ip, port);
     }
 
+    public void setUsername(String username){
+        this.username = username;
+    }
+
+    public void setPassword(String password){
+        this.password = password;
+    }
+
     public String sendCommand(String command) throws IOException, ClassNotFoundException, InterruptedException {
         MusicBandRequest musicBandRequest = new MusicBandRequest();
+        musicBandRequest.username = username;
+        musicBandRequest.password = password;
         musicBandRequest.name = command;
         sendToServer(musicBandRequest);
         return getResponseString(getResponse());
@@ -21,6 +33,8 @@ public class MusicBandConnection implements Closeable {
 
     public String sendCommand(String command, String arg) throws IOException, ClassNotFoundException {
         MusicBandRequest musicBandRequest = new MusicBandRequest();
+        musicBandRequest.username = username;
+        musicBandRequest.password = password;
         musicBandRequest.name = command;
         musicBandRequest.arg = arg;
         sendToServer(musicBandRequest);
@@ -29,6 +43,8 @@ public class MusicBandConnection implements Closeable {
 
     public String sendCommand(String command, String arg, MusicBand band) throws IOException, ClassNotFoundException {
         MusicBandRequest musicBandRequest = new MusicBandRequest();
+        musicBandRequest.username = username;
+        musicBandRequest.password = password;
         musicBandRequest.name = command;
         musicBandRequest.arg = arg;
         musicBandRequest.band = band;
@@ -38,7 +54,7 @@ public class MusicBandConnection implements Closeable {
 
     @Override
     public void close() throws IOException {
-
+        socket.close();
     }
 
     private void sendToServer(MusicBandRequest musicBandRequest) throws IOException {
@@ -61,6 +77,6 @@ public class MusicBandConnection implements Closeable {
         if(response.status == ResponseStatus.SUCCESS){
             return "Command executed successfully!\n" + response.response;
         }
-        return "Failed to execute command!\n" + response;
+        return "Failed to execute command!\n" + response.response;
     }
 }

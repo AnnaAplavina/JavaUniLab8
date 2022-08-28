@@ -29,11 +29,31 @@ public class CommandsExecutor {
         this.userList = userDao.getAllUsers();
     }
 
-    public MusicBandResponse executeCommand(MusicBandRequest command) throws IOException, NoSuchAlgorithmException {
+    public MusicBandResponse executeCommand(MusicBandRequest command) throws IOException, NoSuchAlgorithmException, QueryExecutionException {
         MusicBandResponse response = new MusicBandResponse();
+        if(command.name.equals("register")){
+            if(userList.stream().filter(u -> u.getUsername().equals(command.username)).findAny().orElse(null) == null){
+                User user = new User(command.username, encryptPassword(command.password));
+                userDao.addUser(user);
+                userList.add(user);
+                response.status = ResponseStatus.SUCCESS;
+                response.response = "New user successfully registered!";
+                return response;
+            }
+            else {
+                response.status = ResponseStatus.FAIL;
+                response.response = "This username is already used!";
+                return response;
+            }
+        }
         if(!checkUser(command.username, command.password)){
             response.status = ResponseStatus.FAIL;
             response.response = "Authorization failed";
+            return response;
+        }
+        if(command.name.equals("login")){
+            response.status = ResponseStatus.SUCCESS;
+            response.response = "Authorization successful";
             return response;
         }
         Command executableCommand = getCommandObject(command, command.username);
@@ -53,10 +73,7 @@ public class CommandsExecutor {
         String encryptedPassword = encryptPassword(password);
         User user = userList.stream().filter(u -> u.getUsername().equals(username) &&
                 u.getEncryptedPass().equals(encryptedPassword)).findAny().orElse(null);
-        if(user != null){
-            return true;
-        }
-        return false;
+        return user != null;
     }
 
     private String encryptPassword(String password) throws NoSuchAlgorithmException {
@@ -122,5 +139,4 @@ public class CommandsExecutor {
             return null;
         }
     }
-
 }

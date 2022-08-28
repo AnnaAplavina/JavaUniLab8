@@ -1,6 +1,7 @@
 import collectionitems.BandCreator;
 import collectionitems.WrongArgumentException;
 import connection.MusicBandConnection;
+import connection.MusicBandResponse;
 import input.EndOfInputException;
 import input.InputSource;
 import java.io.IOException;
@@ -21,6 +22,48 @@ public class MusicBandClient {
 
     public void launch(){
             try(MusicBandConnection connection = new MusicBandConnection(ip, port)) {
+                //authorizing
+                String username;
+                String password;
+                while (true){
+                    String loginOrRegister = inputSource.readString("Please type in login to login" +
+                            " or register to register a new user");
+                    if(loginOrRegister.equals("login")){
+                        username = inputSource.readString("Username");
+                        password = inputSource.readString("Password");
+                        connection.setUsername(username);
+                        connection.setPassword(password);
+                        String response = connection.sendCommand("login");
+                        if(response.contains("Command executed successfully!")){
+                            System.out.println(response);
+                            break;
+                        }
+                        else {
+                            System.out.println(response);
+                            continue;
+                        }
+                    }
+                    if(loginOrRegister.equals("register")){
+                        username = inputSource.readString("Username");
+                        String pass1 = inputSource.readString("Password");
+                        String pass2 = inputSource.readString("Repeat password");
+                        if(pass1.equals(pass2)){
+                            password = pass1;
+                            connection.setUsername(username);
+                            connection.setPassword(password);
+                            String response = connection.sendCommand("register");
+                            if(response.contains("Command executed successfully!")){
+                                System.out.println(response);
+                                break;
+                            }
+                            else {
+                                System.out.println(response);
+                            }
+                        }
+                    }
+                }
+
+                //reading and sending commands
                 while(true){
                 String command = inputSource.readString("New command");
                 command = command.trim();
@@ -100,10 +143,8 @@ public class MusicBandClient {
             catch (IOException ex){
                 System.out.println("Can't connect to server");
             }
-            catch (ClassNotFoundException ex){
+            catch (ClassNotFoundException | InterruptedException ex){
                 ex.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
     }
     }

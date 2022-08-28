@@ -1,6 +1,7 @@
 package connection;
 
 import data.CollectionManager;
+import data.database.QueryExecutionException;
 import logic.CommandsExecutor;
 
 import java.io.*;
@@ -62,6 +63,13 @@ public class MusicBandServer {
                             logger.info("Client disconnected " + k.channel());
                             System.out.println("Client disconnected " + k.channel());
                             k.cancel();
+                            }
+                        catch (QueryExecutionException ex){
+                            logger.info("Server error" + ex.getMessage());
+                            MusicBandResponse response = new MusicBandResponse();
+                            response.status = ResponseStatus.FAIL;
+                            response.response = "Server error";
+                            ResponseSender.sendResponse(response, (SocketChannel) k.channel());
                             }
                         }
                 } catch (ClassNotFoundException | IOException e) {

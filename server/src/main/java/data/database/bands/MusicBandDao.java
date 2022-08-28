@@ -5,7 +5,9 @@ import data.database.DaoInitializationException;
 import data.database.QueryExecutionException;
 
 import java.sql.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -55,8 +57,9 @@ public class MusicBandDao {
                     coordinates.setY(resultSet.getFloat("y"));
                     band.setCoordinates(coordinates);
 
-                    String dateStr = resultSet.getString("creation_date");
-                    LocalDateTime creationDate = LocalDateTime.parse(dateStr);
+                    Date date = resultSet.getDate("creation_date");
+                    LocalDateTime creationDate = Instant.ofEpochMilli(date.getTime()).
+                            atZone(ZoneId.systemDefault()).toLocalDateTime();
                     band.setCreationDate(creationDate);
 
                     int numberOfParticipants = resultSet.getInt("number_of_participants");
@@ -98,7 +101,7 @@ public class MusicBandDao {
         return bands;
     }
 
-    public void addBandToDb(MusicBand band, String owner) throws QueryExecutionException {
+    public int addBandToDb(MusicBand band, String owner) throws QueryExecutionException {
         String query = "INSERT INTO " + tableName +
                 "(name,x,y," +
                 "creation_date,number_of_participants,albums_count,description," +
@@ -133,6 +136,13 @@ public class MusicBandDao {
             }
             preparedStatement.setString(13, owner);
             preparedStatement.executeUpdate();
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if(generatedKeys.next()){
+                return generatedKeys.getInt(1);
+            }
+            else {
+                throw new SQLException("Could not retrieve the id");
+            }
         }
         catch (SQLException ex){
             logger.info("Could no add new music band to database\n" + ex.getMessage());
@@ -219,10 +229,7 @@ public class MusicBandDao {
             if(owner == null){
                 return false;
             }
-            if(owner.equals(username)){
-                return true;
-            }
-            return false;
+            return owner.equals(username);
         }
         catch (SQLException ex){
             throw new QueryExecutionException("Could not find owner in db " + ex.getMessage());

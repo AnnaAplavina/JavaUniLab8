@@ -98,12 +98,12 @@ public class MusicBandDao {
         return bands;
     }
 
-    public void addBandToDb(MusicBand band) throws QueryExecutionException {
+    public void addBandToDb(MusicBand band, String owner) throws QueryExecutionException {
         String query = "INSERT INTO " + tableName +
                 "(name,x,y," +
                 "creation_date,number_of_participants,albums_count,description," +
-                "genre,best_album_name,best_album_tracks,best_album_length,best_album_sales)"+
-                "VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
+                "genre,best_album_name,best_album_tracks,best_album_length,best_album_sales, owner)"+
+                "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try{
             PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, band.getName());
@@ -131,6 +131,7 @@ public class MusicBandDao {
                 preparedStatement.setNull(11, Types.INTEGER);
                 preparedStatement.setNull(12, Types.FLOAT);
             }
+            preparedStatement.setString(13, owner);
             preparedStatement.executeUpdate();
         }
         catch (SQLException ex){
@@ -180,6 +181,7 @@ public class MusicBandDao {
                 preparedStatement.setNull(11, Types.INTEGER);
                 preparedStatement.setNull(12, Types.FLOAT);
             }
+            preparedStatement.setInt(13, id);
             preparedStatement.executeUpdate();
         }
         catch (SQLException ex){
@@ -188,15 +190,42 @@ public class MusicBandDao {
         }
     }
 
-    public void clear() throws QueryExecutionException {
+    public void clearUserBands(String username) throws QueryExecutionException {
         try{
-            String query = "DELETE FROM " + tableName;
+            String query = "DELETE FROM " + tableName + " WHERE owner=" + username;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.executeUpdate();
         }
         catch (SQLException ex){
             logger.info("Could no add new music band to database\n" + ex.getMessage());
-            throw new QueryExecutionException("Could not clear the table" + ex.getMessage());
+            throw new QueryExecutionException("Could not clearUserBands the table" + ex.getMessage());
+        }
+    }
+
+    /**
+     * checks if a user is the owner of the band with a given id
+     * @param id id of the music band
+     * @param username name of the user
+     * @return false if the band with the id does not exist or if the user is not the owner
+     */
+    public boolean isOwner(int id, String username) throws QueryExecutionException {
+        try{
+            String query = "SELECT * FROM " + tableName + " WHERE id=" + id;
+            ResultSet resultSet = statement.executeQuery(query);
+            String owner = null;
+            while (resultSet.next()){
+                owner = resultSet.getString("owner");
+            }
+            if(owner == null){
+                return false;
+            }
+            if(owner.equals(username)){
+                return true;
+            }
+            return false;
+        }
+        catch (SQLException ex){
+            throw new QueryExecutionException("Could not find owner in db " + ex.getMessage());
         }
     }
 
@@ -214,7 +243,8 @@ public class MusicBandDao {
                 "best_album_name TEXT," +
                 "best_album_tracks INT," +
                 "best_album_length INT," +
-                "best_album_sales FLOAT(24))";
+                "best_album_sales FLOAT(24)," +
+                "owner TEXT NOT NULL)";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.executeUpdate();
     }

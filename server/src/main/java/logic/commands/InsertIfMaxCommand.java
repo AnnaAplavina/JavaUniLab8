@@ -13,10 +13,12 @@ import java.io.IOException;
 public class InsertIfMaxCommand implements Command{
     private CollectionManager manager;
     private MusicBand band;
+    private String username;
 
-    public InsertIfMaxCommand(CollectionManager manager, MusicBand band){
+    public InsertIfMaxCommand(CollectionManager manager, MusicBand band, String username){
         this.manager = manager;
         this.band = band;
+        this.username = username;
     }
 
 
@@ -26,7 +28,7 @@ public class InsertIfMaxCommand implements Command{
             throw new WrongArgumentException("Band can not be null");
         }
         try {
-            if(manager.addIfMax(band)){
+            if(manager.addIfMax(band, username)){
                     return "Added new max element";
                 }
         } catch (QueryExecutionException e) {

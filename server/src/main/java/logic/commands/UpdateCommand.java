@@ -11,14 +11,16 @@ import java.io.IOException;
  * This command is for replacing an element with a particular id
  */
 public class UpdateCommand implements Command {
-    String arg;
-    CollectionManager manager;
-    MusicBand band;
+    private String arg;
+    private CollectionManager manager;
+    private MusicBand band;
+    private String username;
 
-    public UpdateCommand(String arg, CollectionManager manager, MusicBand band){
+    public UpdateCommand(String arg, CollectionManager manager, MusicBand band, String username){
         this.manager = manager;
         this.arg = arg;
         this.band = band;
+        this.username = username;
     }
 
     @Override
@@ -35,7 +37,13 @@ public class UpdateCommand implements Command {
                 throw new WrongArgumentException("Id must be greater than 0");
             }
             try {
-                manager.changeElementFromUser(id, band);
+                if(manager.checkOwner(id ,username)){
+                    manager.changeElementFromUser(id, band);
+                }
+                else{
+                    throw new WrongArgumentException("The band with these id does not exist" +
+                            " or you are not the owner of this band");
+                }
             } catch (QueryExecutionException e) {
                 throw new WrongArgumentException("Error when working with db!");
             }

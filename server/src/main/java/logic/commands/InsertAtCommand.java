@@ -15,11 +15,13 @@ public class InsertAtCommand implements Command
     private String arg;
     private CollectionManager manager;
     private MusicBand band;
+    private String username;
 
-    public InsertAtCommand(CollectionManager manager, String arg, MusicBand band){
+    public InsertAtCommand(CollectionManager manager, String arg, MusicBand band, String username){
         this.arg = arg;
         this.manager = manager;
         this.band = band;
+        this.username = username;
     }
 
     @Override
@@ -31,7 +33,7 @@ public class InsertAtCommand implements Command
             int index = Integer.parseInt(arg);
             if(index >= 0) {
                 try {
-                    manager.addNewElementFromUser(index, band);
+                    manager.addNewElementFromUser(index, band, username);
                 } catch (QueryExecutionException e) {
                     throw new WrongArgumentException("Error when working with db!");
                 }

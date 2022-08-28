@@ -6,6 +6,7 @@ import logic.CommandsExecutor;
 import java.io.*;
 import java.net.*;
 import java.nio.channels.*;
+import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
@@ -24,7 +25,7 @@ public class MusicBandServer {
         this.collectionManager = collectionManager;
     }
 
-    public void launch() throws IOException {
+    public void launch() throws IOException, NoSuchAlgorithmException {
         logger.info("Launching the server ");
 
         Selector selector = Selector.open();

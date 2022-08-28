@@ -14,7 +14,7 @@ public class InfoCommand implements Command{
 
     @Override
     public String execute(){
-        return "Collection type: Vector \n" + "Initialization Data: " + collectionManager.getInitializationDate()
+        return "Collection type: Vector \n" + "Initialization Date: " + collectionManager.getInitializationDate()
                 + "\nCollection size: " + collectionManager.getCollectionSize();
     }
 }

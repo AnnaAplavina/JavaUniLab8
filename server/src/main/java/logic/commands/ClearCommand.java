@@ -8,16 +8,18 @@ import data.database.QueryExecutionException;
  * This command clears the collection
  */
 public class ClearCommand implements Command{
-    CollectionManager collectionManager;
+    private CollectionManager collectionManager;
+    private String username;
 
-    public ClearCommand(CollectionManager collectionManager){
+    public ClearCommand(CollectionManager collectionManager, String username){
         this.collectionManager = collectionManager;
+        this.username = username;
     }
 
     @Override
     public String execute() throws WrongArgumentException {
         try {
-            collectionManager.clearCollection();
+            collectionManager.clearCollection(username);
         } catch (QueryExecutionException e) {
             throw new WrongArgumentException("Error when working with db!");
         }

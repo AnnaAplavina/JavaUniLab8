@@ -75,7 +75,7 @@ public class MusicBandDaoTests {
         try {
             MusicBand band = new MusicBand();
             band.setName("Added Band");
-            musicBandDao.addBandToDb(band);
+            musicBandDao.addBandToDb(band, "TestUser");
             allBands.add(band);
             assertEquals(allBands, musicBandDao.getBandsFromDb());
         }

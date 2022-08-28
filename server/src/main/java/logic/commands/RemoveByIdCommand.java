@@ -9,11 +9,13 @@ import data.database.QueryExecutionException;
  */
 public class RemoveByIdCommand implements Command {
     private CollectionManager collectionManager;
-    String arg;
+    private String arg;
+    private String username;
 
-    public RemoveByIdCommand(CollectionManager collectionManager, String arg){
+    public RemoveByIdCommand(CollectionManager collectionManager, String arg, String username){
         this.collectionManager = collectionManager;
         this.arg = arg;
+        this.username = username;
     }
 
     @Override
@@ -27,7 +29,13 @@ public class RemoveByIdCommand implements Command {
                 throw new WrongArgumentException("id must be greater than 0");
             }
             try {
-                collectionManager.removeElementById(id);
+                if(collectionManager.checkOwner(id, username)){
+                    collectionManager.removeElementById(id);
+                }
+                else{
+                    throw new WrongArgumentException("The band with these id does not exist" +
+                            " or you are not the owner of this band");
+                }
             } catch (QueryExecutionException e) {
                 throw new WrongArgumentException("Error when working with db!");
             }

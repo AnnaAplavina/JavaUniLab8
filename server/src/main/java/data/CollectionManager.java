@@ -62,8 +62,8 @@ public class CollectionManager {
     /**
      * reads new band from user
      */
-    public void addNewElementFromUser(MusicBand band) throws QueryExecutionException {
-        musicBandDao.addBandToDb(band);
+    public void addNewElementFromUser(MusicBand band, String username) throws QueryExecutionException {
+        musicBandDao.addBandToDb(band, username);
         collection.add(band);
         sortCollectionBySize();
     }
@@ -73,11 +73,11 @@ public class CollectionManager {
      * @param index index where new element is supposed to be
      * @throws ArrayIndexOutOfBoundsException given index is out of bounds
      */
-    public void addNewElementFromUser(int index, MusicBand band) throws ArrayIndexOutOfBoundsException, QueryExecutionException {
+    public void addNewElementFromUser(int index, MusicBand band, String username) throws ArrayIndexOutOfBoundsException, QueryExecutionException {
         if(index >= collection.size()){
             throw new ArrayIndexOutOfBoundsException();
         }
-        musicBandDao.addBandToDb(band);
+        musicBandDao.addBandToDb(band, username);
         collection.add(index, band);
         sortCollectionBySize();
     }
@@ -131,8 +131,8 @@ public class CollectionManager {
     /**
      * clears the collection
      */
-    public void clearCollection() throws QueryExecutionException {
-        musicBandDao.clear();
+    public void clearCollection(String username) throws QueryExecutionException {
+        musicBandDao.clearUserBands(username);
         collection = new Vector<>();
     }
 
@@ -164,18 +164,18 @@ public class CollectionManager {
      * add new element to collection if it is the max element
      * @return true if successfully added, otherwise false
      */
-    public boolean addIfMax(MusicBand newBand) throws QueryExecutionException {
+    public boolean addIfMax(MusicBand newBand, String username) throws QueryExecutionException {
         try {
             MusicBand maxBand;
             maxBand = getMax();
             if(newBand.compareTo(maxBand) > 0){
-                musicBandDao.addBandToDb(newBand);
+                musicBandDao.addBandToDb(newBand, username);
                 collection.add(newBand);
                 sortCollectionBySize();
                 return true;
             }
         } catch (EmptyCollectionException e) {
-            musicBandDao.addBandToDb(newBand);
+            musicBandDao.addBandToDb(newBand, username);
             collection.add(newBand);
             return true;
         }
@@ -186,22 +186,26 @@ public class CollectionManager {
      * add new element to collection if it is the min element
      * @return true if successfully added, otherwise false
      */
-    public boolean addIfMin(MusicBand newBand) throws QueryExecutionException {
+    public boolean addIfMin(MusicBand newBand, String username) throws QueryExecutionException {
         try {
             MusicBand minBand;
             minBand = getMin();
             if(newBand.compareTo(minBand) < 0){
-                musicBandDao.addBandToDb(newBand);
+                musicBandDao.addBandToDb(newBand, username);
                 collection.add(newBand);
                 sortCollectionBySize();
                 return true;
             }
         } catch (EmptyCollectionException e) {
-            musicBandDao.addBandToDb(newBand);
+            musicBandDao.addBandToDb(newBand, username);
             collection.add(newBand);
             return true;
         }
         return false;
+    }
+
+    public boolean checkOwner(int id, String username) throws QueryExecutionException {
+        return musicBandDao.isOwner(id, username);
     }
 
     /**

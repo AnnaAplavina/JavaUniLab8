@@ -12,11 +12,13 @@ import java.io.IOException;
  */
 public class InsertIfMinCommand implements Command{
     private CollectionManager manager;
-    MusicBand band;
+    private MusicBand band;
+    private String username;
 
-    public InsertIfMinCommand(CollectionManager manager, MusicBand band){
+    public InsertIfMinCommand(CollectionManager manager, MusicBand band, String username){
         this.manager = manager;
         this.band = band;
+        this.username = username;
     }
 
 
@@ -26,7 +28,7 @@ public class InsertIfMinCommand implements Command{
             throw new WrongArgumentException("Band can not be null");
         }
         try {
-            if(manager.addIfMin(band)){
+            if(manager.addIfMin(band, username)){
                 return "Added new min element";
             }
         } catch (QueryExecutionException e) {

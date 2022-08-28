@@ -20,7 +20,7 @@ public class ServerMain {
                     "s264432", "ajf870", "users_table");
             CollectionManager collectionManager = new CollectionManager(musicBandDao);
             CommandsExecutor executor = new CommandsExecutor(collectionManager, userDao);
-            MusicBandServer server = new MusicBandServer(4321, executor, collectionManager);
+            MusicBandServer server = new MusicBandServer(4321, executor);
             try {
                 server.launch();
             } catch (IOException | NoSuchAlgorithmException e) {

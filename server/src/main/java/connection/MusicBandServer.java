@@ -17,13 +17,11 @@ public class MusicBandServer {
     private final int port;
     private final CommandsReader commandsReader;
     private final CommandsExecutor commandsExecutor;
-    private final CollectionManager collectionManager;
 
-    public MusicBandServer(int port, CommandsExecutor commandsExecutor, CollectionManager collectionManager) {
+    public MusicBandServer(int port, CommandsExecutor commandsExecutor) {
         this.port = port;
         this.commandsReader = new CommandsReader();
         this.commandsExecutor = commandsExecutor;
-        this.collectionManager = collectionManager;
     }
 
     public void launch() throws IOException, NoSuchAlgorithmException {

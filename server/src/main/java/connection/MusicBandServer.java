@@ -1,6 +1,5 @@
 package connection;
 
-import data.CollectionManager;
 import data.database.QueryExecutionException;
 import logic.CommandsExecutor;
 
@@ -41,7 +40,6 @@ public class MusicBandServer {
             }
             Iterator<SelectionKey> selectedKeys = selector.selectedKeys().iterator();
             while (selectedKeys.hasNext()){
-                checkSave();
                 SelectionKey k = selectedKeys.next();
                 try{
                     if(k.channel() == ssc){
@@ -78,15 +76,6 @@ public class MusicBandServer {
                 finally {
                     selectedKeys.remove();
                 }
-            }
-        }
-    }
-
-    private void checkSave() throws IOException {
-        if(System.in.available() > 0){
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            if(reader.readLine().equals("save")){
-                System.out.println("Save is no longer available!");
             }
         }
     }

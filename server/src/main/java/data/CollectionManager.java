@@ -5,12 +5,10 @@ import collectionitems.MusicGenre;
 import collectionitems.WrongArgumentException;
 import data.database.bands.MusicBandDao;
 import data.database.QueryExecutionException;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +18,7 @@ public class CollectionManager {
     private final Date initializationDate;
     private Vector<MusicBand> collection;
     private final MusicBandDao musicBandDao;
+    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
     public CollectionManager(MusicBandDao musicBandDao) throws QueryExecutionException {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -28,14 +27,19 @@ public class CollectionManager {
         this.musicBandDao = musicBandDao;
         collection = new Vector<>();
         collection.addAll(musicBandDao.getBandsFromDb());
-        sortCollectionBySize();
     }
 
     /**
      * @return time when this collection was loaded
      */
     public Date getInitializationDate(){
-        return initializationDate;
+        readWriteLock.readLock().lock();
+        try{
+            return initializationDate;
+        }
+        finally {
+            readWriteLock.readLock().unlock();
+        }
     }
 
     /**
@@ -43,7 +47,13 @@ public class CollectionManager {
      * @return size of the collection
      */
     public int getCollectionSize(){
-        return collection.size();
+        readWriteLock.readLock().lock();
+        try{
+            return collection.size();
+        }
+        finally {
+            readWriteLock.readLock().unlock();
+        }
     }
 
     /**
@@ -51,20 +61,30 @@ public class CollectionManager {
      * @return all collection elements string representation
      */
     public String toString(){
-        StringBuilder res = new StringBuilder();
-        MusicBand[] bands = new MusicBand[collection.size()];
-        collection.toArray(bands);
-        List<MusicBand> bandsList = new ArrayList<>(Arrays.asList(bands));
-        bandsList.forEach(band -> {res.append(band); res.append("\n\n");});
-        return res.toString();
+        readWriteLock.readLock().lock();
+        try{
+            StringBuilder res = new StringBuilder();
+            MusicBand[] bands = new MusicBand[collection.size()];
+            collection.toArray(bands);
+            List<MusicBand> bandsList = new ArrayList<>(Arrays.asList(bands));
+            bandsList.forEach(band -> {res.append(band); res.append("\n\n");});
+            return res.toString();
+        }
+        finally {
+            readWriteLock.readLock().unlock();
+        }
     }
 
     /**
-     * reads new band from user
+     * adds a new band to the database and collection
      */
     public void addNewElementFromUser(MusicBand band, String username) throws QueryExecutionException {
-        musicBandDao.addBandToDb(band, username);
-        sortCollectionBySize();
+        readWriteLock.writeLock().lock();
+        try{
+            musicBandDao.addBandToDb(band, username);
+        } finally {
+            readWriteLock.writeLock().unlock();
+        }
     }
 
     /**
@@ -72,13 +92,18 @@ public class CollectionManager {
      * @param index index where new element is supposed to be
      * @throws ArrayIndexOutOfBoundsException given index is out of bounds
      */
-    public void addNewElementFromUser(int index, MusicBand band, String username) throws ArrayIndexOutOfBoundsException, QueryExecutionException {
-        if(index >= collection.size()){
-            throw new ArrayIndexOutOfBoundsException();
+    public void addNewElementFromUser(int index, MusicBand band, String username)
+            throws ArrayIndexOutOfBoundsException, QueryExecutionException {
+        readWriteLock.writeLock().lock();
+        try{
+            if(index >= collection.size()){
+                throw new ArrayIndexOutOfBoundsException();
+            }
+            musicBandDao.addBandToDb(band, username);
+            collection.add(index, band);
+        } finally {
+            readWriteLock.writeLock().unlock();
         }
-        musicBandDao.addBandToDb(band, username);
-        collection.add(index, band);
-        sortCollectionBySize();
     }
 
     /**
@@ -87,12 +112,17 @@ public class CollectionManager {
      * @return element of the collection with a given id
      */
     public MusicBand findElementById(int id){
-        MusicBand band = null;
-        List<MusicBand> foundBands = collection.stream().filter(b -> b.getId() == id).collect(Collectors.toList());
-        if(foundBands.size() > 0){
-            band = foundBands.get(0);
+        readWriteLock.readLock().lock();
+        try{
+            MusicBand band = null;
+            List<MusicBand> foundBands = collection.stream().filter(b -> b.getId() == id).collect(Collectors.toList());
+            if(foundBands.size() > 0){
+                band = foundBands.get(0);
+            }
+            return band;
+        } finally {
+            readWriteLock.readLock().unlock();
         }
-        return band;
     }
 
     /**
@@ -101,13 +131,17 @@ public class CollectionManager {
      * @throws WrongArgumentException id was incorrect(element with such id does not exist)
      */
     public void removeElementById(int id) throws WrongArgumentException, QueryExecutionException {
-        MusicBand band = findElementById(id);
-        if(band == null){
-            throw new WrongArgumentException("no element with such id");
+        readWriteLock.writeLock().lock();
+        try{
+            MusicBand band = findElementById(id);
+            if(band == null){
+                throw new WrongArgumentException("no element with such id");
+            }
+            musicBandDao.removeBandById(id);
+            collection.removeElement(band);
+        } finally {
+            readWriteLock.writeLock().unlock();
         }
-        musicBandDao.removeBandById(id);
-        collection.removeElement(band);
-        sortCollectionBySize();
     }
 
     /**
@@ -116,23 +150,32 @@ public class CollectionManager {
      * @throws WrongArgumentException id was incorrect(element with such id does not exist)
      */
     public void changeElementFromUser(int id, MusicBand band) throws WrongArgumentException, QueryExecutionException {
-        MusicBand oldBand = findElementById(id);
-        if(oldBand == null){
-            throw new WrongArgumentException("no element with such id");
+        readWriteLock.writeLock().lock();
+        try{
+            MusicBand oldBand = findElementById(id);
+            if(oldBand == null){
+                throw new WrongArgumentException("no element with such id");
+            }
+            musicBandDao.changeBandById(id, band);
+            collection.removeElement(band);
+            band.setId(id);
+            collection.add(band);
+        } finally {
+            readWriteLock.writeLock().unlock();
         }
-        musicBandDao.changeBandById(id, band);
-        collection.removeElement(band);
-        band.setId(id);
-        collection.add(band);
-        sortCollectionBySize();
     }
 
     /**
      * clears the collection
      */
     public void clearCollection(String username) throws QueryExecutionException {
-        musicBandDao.clearUserBands(username);
-        collection = new Vector<>();
+        readWriteLock.writeLock().lock();
+        try{
+            musicBandDao.clearUserBands(username);
+            collection.addAll(musicBandDao.getBandsFromDb());
+        } finally {
+            readWriteLock.writeLock().unlock();
+        }
     }
 
     /**
@@ -141,10 +184,15 @@ public class CollectionManager {
      * @throws EmptyCollectionException collection was empty
      */
     public MusicBand getMax() throws EmptyCollectionException {
-        if(collection.size() == 0){
-            throw new EmptyCollectionException();
+        readWriteLock.readLock().lock();
+        try{
+            if(collection.size() == 0){
+                throw new EmptyCollectionException();
+            }
+            return collection.stream().max(MusicBand::compareTo).get();
+        } finally {
+            readWriteLock.readLock().unlock();
         }
-        return collection.stream().max(MusicBand::compareTo).get();
     }
 
     /**
@@ -153,10 +201,15 @@ public class CollectionManager {
      * @throws EmptyCollectionException collection was empty
      */
     public MusicBand getMin() throws EmptyCollectionException {
-        if(collection.size() == 0){
-            throw new EmptyCollectionException();
+        readWriteLock.readLock().lock();
+        try{
+            if(collection.size() == 0){
+                throw new EmptyCollectionException();
+            }
+            return collection.stream().min(MusicBand::compareTo).get();
+        } finally {
+            readWriteLock.readLock().unlock();
         }
-        return collection.stream().min(MusicBand::compareTo).get();
     }
 
     /**
@@ -164,21 +217,25 @@ public class CollectionManager {
      * @return true if successfully added, otherwise false
      */
     public boolean addIfMax(MusicBand newBand, String username) throws QueryExecutionException {
-        try {
-            MusicBand maxBand;
-            maxBand = getMax();
-            if(newBand.compareTo(maxBand) > 0){
+        readWriteLock.writeLock().lock();
+        try{
+            try {
+                MusicBand maxBand;
+                maxBand = getMax();
+                if(newBand.compareTo(maxBand) > 0){
+                    musicBandDao.addBandToDb(newBand, username);
+                    collection.add(newBand);
+                    return true;
+                }
+            } catch (EmptyCollectionException e) {
                 musicBandDao.addBandToDb(newBand, username);
                 collection.add(newBand);
-                sortCollectionBySize();
                 return true;
             }
-        } catch (EmptyCollectionException e) {
-            musicBandDao.addBandToDb(newBand, username);
-            collection.add(newBand);
-            return true;
+            return false;
+        } finally {
+            readWriteLock.writeLock().unlock();
         }
-        return false;
     }
 
     /**
@@ -186,25 +243,34 @@ public class CollectionManager {
      * @return true if successfully added, otherwise false
      */
     public boolean addIfMin(MusicBand newBand, String username) throws QueryExecutionException {
-        try {
-            MusicBand minBand;
-            minBand = getMin();
-            if(newBand.compareTo(minBand) < 0){
+        readWriteLock.writeLock().lock();
+        try{
+            try {
+                MusicBand minBand;
+                minBand = getMin();
+                if(newBand.compareTo(minBand) < 0){
+                    musicBandDao.addBandToDb(newBand, username);
+                    collection.add(newBand);
+                    return true;
+                }
+            } catch (EmptyCollectionException e) {
                 musicBandDao.addBandToDb(newBand, username);
                 collection.add(newBand);
-                sortCollectionBySize();
                 return true;
             }
-        } catch (EmptyCollectionException e) {
-            musicBandDao.addBandToDb(newBand, username);
-            collection.add(newBand);
-            return true;
+            return false;
+        } finally {
+            readWriteLock.writeLock().unlock();
         }
-        return false;
     }
 
     public boolean checkOwner(int id, String username) throws QueryExecutionException {
-        return musicBandDao.isOwner(id, username);
+        readWriteLock.readLock().lock();
+        try{
+            return musicBandDao.isOwner(id, username);
+        } finally {
+            readWriteLock.readLock().unlock();
+        }
     }
 
     /**
@@ -213,7 +279,12 @@ public class CollectionManager {
      * @return the amount of counted bands
      */
     public int countWithLesserGenre(MusicGenre genre){
-        return (int) collection.stream().filter(b -> b.getGenre() != null && genre.compareTo(b.getGenre()) > 0).count();
+        readWriteLock.readLock().lock();
+        try{
+            return (int) collection.stream().filter(b -> b.getGenre() != null && genre.compareTo(b.getGenre()) > 0).count();
+        } finally {
+            readWriteLock.readLock().unlock();
+        }
     }
 
     /**
@@ -222,8 +293,13 @@ public class CollectionManager {
      * @return list of all found bands
      */
     public List<MusicBand> getWithDescriptionStart(String start){
-        return collection.stream().filter(b -> b.getDescription() != null
-                && b.getDescription().startsWith(start)).collect(Collectors.toList());
+        readWriteLock.readLock().lock();
+        try{
+            return collection.stream().filter(b -> b.getDescription() != null
+                    && b.getDescription().startsWith(start)).collect(Collectors.toList());
+        } finally {
+            readWriteLock.readLock().unlock();
+        }
     }
 
     /**
@@ -231,29 +307,14 @@ public class CollectionManager {
      * @return list of bands
      */
     public List<MusicBand> getDescending(){
-        List<MusicBand> res = new ArrayList<>(collection);
-        res.sort(MusicBand::compareTo);
-        return res;
-    }
+        readWriteLock.readLock().lock();
+        try{
+            List<MusicBand> res = new ArrayList<>(collection);
+            res.sort(MusicBand::compareTo);
+            return res;
+        } finally {
+            readWriteLock.readLock().unlock();
+        }
 
-    private void sortCollectionBySize(){
-        collection.sort((o1, o2) -> {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            byte[] arr1 = {};
-            byte[] arr2 = {};
-            try {
-                ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);
-                outputStream.writeObject(o1);
-                outputStream.flush();
-                arr1 = byteArrayOutputStream.toByteArray();
-                byteArrayOutputStream.reset();
-                outputStream.writeObject(o2);
-                arr2 = byteArrayOutputStream.toByteArray();
-                outputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return arr1.length - arr2.length;
-        });
     }
 }

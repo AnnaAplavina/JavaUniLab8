@@ -29,7 +29,6 @@ public class CommandsReader {
         Object readObject = ois.readObject();
         MusicBandRequest command = (MusicBandRequest) readObject;
         logger.info("Received: " + command.name + " From client: " + channel);
-        System.out.println("Received: " + command.name + " From client: " + channel);
         return command;
     }
 }

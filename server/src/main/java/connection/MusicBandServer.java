@@ -8,6 +8,10 @@ import java.net.*;
 import java.nio.channels.*;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 public class MusicBandServer {
@@ -16,6 +20,8 @@ public class MusicBandServer {
     private final int port;
     private final CommandsReader commandsReader;
     private final CommandsExecutor commandsExecutor;
+    private final ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+    private final ExecutorService fixedThreadPool = Executors.newFixedThreadPool(8);
 
     public MusicBandServer(int port, CommandsExecutor commandsExecutor) {
         this.port = port;
@@ -41,8 +47,8 @@ public class MusicBandServer {
             Iterator<SelectionKey> selectedKeys = selector.selectedKeys().iterator();
             while (selectedKeys.hasNext()){
                 SelectionKey k = selectedKeys.next();
-                try{
                     if(k.channel() == ssc){
+                        selectedKeys.remove();
                         SocketChannel channel = ssc.accept();
                         channel.configureBlocking(false);
                         channel.register(selector, SelectionKey.OP_READ);
@@ -50,31 +56,49 @@ public class MusicBandServer {
                         System.out.println("Client connected " + channel);
                     }
                     else{
-                            MusicBandRequest command = commandsReader.readCommand((SocketChannel) k.channel());
-                        try{
-                                MusicBandResponse response = commandsExecutor.executeCommand(command);
-                                ResponseSender.sendResponse(response, (SocketChannel) k.channel());
-                            }
-                            catch (StreamCorruptedException|EOFException ex){
-                            logger.info("Client disconnected " + k.channel());
-                            System.out.println("Client disconnected " + k.channel());
-                            k.cancel();
-                            }
-                        catch (QueryExecutionException ex){
-                            logger.info("Server error" + ex.getMessage());
-                            MusicBandResponse response = new MusicBandResponse();
-                            response.status = ResponseStatus.FAIL;
-                            response.response = "Server error";
-                            ResponseSender.sendResponse(response, (SocketChannel) k.channel());
-                            }
+                        synchronized (k){
+                            Future<MusicBandRequest> commandFuture = cachedThreadPool.submit(
+                                    () -> {
+                                        try {
+                                            return commandsReader.readCommand((SocketChannel) k.channel());
+                                        }
+                                        catch (IOException ex){
+                                            throw new IOException(ex.getMessage());
+                                        }
+                                    });
+                            Future<MusicBandResponse> responseFuture = fixedThreadPool.submit(()-> {
+                                try {
+                                    MusicBandRequest request = commandFuture.get();
+                                    return commandsExecutor.executeCommand(request);
+                                } catch (InterruptedException | QueryExecutionException | NoSuchAlgorithmException ex) {
+                                    ex.printStackTrace();
+                                    logger.info(ex.getMessage());
+                                    MusicBandResponse response = new MusicBandResponse();
+                                    response.status = ResponseStatus.FAIL;
+                                    response.response = "Error on server";
+                                    return response;
+                                }
+                                catch (ExecutionException ex){
+                                    throw new IOException(ex.getMessage());
+                                }
+                            });
+                            fixedThreadPool.submit(()->{
+                                try{
+                                    MusicBandResponse response = responseFuture.get();
+                                    if(response != null){
+                                        ResponseSender.sendResponse(response, (SocketChannel) k.channel());
+                                        selectedKeys.remove();
+                                    }
+
+                                }
+                                catch (InterruptedException ex) {
+                                    logger.info(ex.getMessage());
+                                } catch (ExecutionException|IOException ex){
+                                    logger.info("Client disconnected " + k.channel());
+                                    k.cancel();
+                                }
+                            });
                         }
-                } catch (ClassNotFoundException | IOException e) {
-                    logger.info("Client disconnected " + k.channel());
-                    System.out.println("Client disconnected " + k.channel());
-                    k.cancel();
-                }
-                finally {
-                    selectedKeys.remove();
                 }
             }
         }

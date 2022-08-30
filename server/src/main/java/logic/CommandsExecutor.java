@@ -71,9 +71,11 @@ public class CommandsExecutor {
 
     private boolean checkUser(String username, String password) throws NoSuchAlgorithmException {
         String encryptedPassword = encryptPassword(password);
-        User user = userList.stream().filter(u -> u.getUsername().equals(username) &&
-                u.getEncryptedPass().equals(encryptedPassword)).findAny().orElse(null);
-        return user != null;
+        synchronized (this){
+            User user = userList.stream().filter(u -> u.getUsername().equals(username) &&
+                    u.getEncryptedPass().equals(encryptedPassword)).findAny().orElse(null);
+            return user != null;
+        }
     }
 
     private String encryptPassword(String password) throws NoSuchAlgorithmException {

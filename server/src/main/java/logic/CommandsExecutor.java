@@ -116,9 +116,6 @@ public class CommandsExecutor {
         if(commandName.equals("save")){
             return new SaveCommand(collectionManager);
         }
-        if(commandName.equals("exit")){
-            return new ExitCommand(collectionManager);
-        }
         if(commandName.equals("insert_at")){
             return new InsertAtCommand(collectionManager, arg, band, username);
         }

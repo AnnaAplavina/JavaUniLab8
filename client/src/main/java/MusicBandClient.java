@@ -105,7 +105,6 @@ public class MusicBandClient {
                 }
                 else if(command.equals("exit")){
                     System.out.println("Exiting program...");
-                    connection.sendCommand("exit");
                     break;
                 }
                 else if(command.equals("info") || command.equals("show") ||

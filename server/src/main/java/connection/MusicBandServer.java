@@ -53,7 +53,6 @@ public class MusicBandServer {
                         channel.configureBlocking(false);
                         channel.register(selector, SelectionKey.OP_READ);
                         logger.info("Client connected " + channel);
-                        System.out.println("Client connected " + channel);
                     }
                     else{
                         synchronized (k){

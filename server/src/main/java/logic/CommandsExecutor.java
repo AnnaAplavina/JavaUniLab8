@@ -81,9 +81,7 @@ public class CommandsExecutor {
     private String encryptPassword(String password) throws NoSuchAlgorithmException {
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
         messageDigest.update(password.getBytes(StandardCharsets.UTF_8), 0, password.length());
-        String res = DatatypeConverter.printHexBinary(messageDigest.digest());
-        System.out.println(res);
-        return res;
+        return DatatypeConverter.printHexBinary(messageDigest.digest());
     }
 
 

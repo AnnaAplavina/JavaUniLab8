@@ -1,7 +1,8 @@
+package logic;
+
 import collectionitems.BandCreator;
 import collectionitems.WrongArgumentException;
 import connection.MusicBandConnection;
-import connection.MusicBandResponse;
 import input.EndOfInputException;
 import input.InputSource;
 import java.io.IOException;
@@ -146,5 +147,5 @@ public class MusicBandClient {
                 ex.printStackTrace();
             }
     }
-    }
+}
 

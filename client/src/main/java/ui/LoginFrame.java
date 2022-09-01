@@ -21,6 +21,7 @@ public class LoginFrame extends JFrame {
         northPanel.setBackground(new Color(88, 119, 235));
         northPanel.setPreferredSize(new Dimension(400, 75));
         northPanel.setLayout(new BorderLayout());
+        northPanel.add(mainLabel);
         this.add(northPanel, BorderLayout.NORTH);
 
         southPanel.setBackground(new Color(88, 119, 235));

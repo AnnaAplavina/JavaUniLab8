@@ -9,7 +9,7 @@ public class LoginFrame extends JFrame {
     JPanel eastPanel = new JPanel();
     JPanel southPanel = new JPanel();
     JPanel centerPanel = new JPanel();
-    JLabel mainLabel = new JLabel("LOGIN", SwingConstants.RIGHT);
+    JLabel mainLabel = new JLabel("LOGIN", SwingConstants.CENTER);
 
     public LoginFrame(){
         this.setLayout(new BorderLayout());
@@ -19,8 +19,10 @@ public class LoginFrame extends JFrame {
         this.setBounds(width/2 - 200, height/2 - 250, 400, 500);
 
         northPanel.setBackground(new Color(88, 119, 235));
-        northPanel.setPreferredSize(new Dimension(400, 75));
-        northPanel.setLayout(new BorderLayout());
+        northPanel.setPreferredSize(new Dimension(400, 110));
+        northPanel.setLayout(new GridBagLayout());
+        mainLabel.setFont(new Font("OPPO Sans", Font.ITALIC, 35));
+        mainLabel.setForeground(Color.WHITE);
         northPanel.add(mainLabel);
         this.add(northPanel, BorderLayout.NORTH);
 

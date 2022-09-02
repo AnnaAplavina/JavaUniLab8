@@ -1,10 +1,9 @@
-package ui;
+package ui.frames;
 
 import ui.components.PlaceholderTextField;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Objects;
 
 public class LoginFrame extends JFrame {
     private JPanel northPanel;
@@ -66,7 +65,6 @@ public class LoginFrame extends JFrame {
         westPanel.add(emojiLabel);
         westPanel.add(new JLabel());
         westPanel.add(lockLabel);
-
         this.add(westPanel, BorderLayout.WEST);
 
         eastPanel.setBackground(mainColor);

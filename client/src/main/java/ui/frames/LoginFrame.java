@@ -8,42 +8,32 @@ import java.io.IOException;
 
 public class LoginFrame extends JFrame {
     //design
-    private JPanel northPanel;
-    private JPanel westPanel;
-    private JPanel eastPanel;
-    private JPanel southPanel;
-    private JPanel centerPanel;
-    private JLabel mainLabel;
-    private JLabel emojiLabel;
-    private JLabel lockLabel;
-    private JLabel usernameCommentLabel;
-    private JLabel serverResponseLabel;
-    private PlaceholderTextField usernameField;
-    private PlaceholderPasswordField passwordField;
-    private JButton signInButton;
-    private JButton registerButton;
+    private final JLabel usernameCommentLabel;
+    private final JLabel serverResponseLabel;
+    private final PlaceholderTextField usernameField;
+    private final PlaceholderPasswordField passwordField;
 
     //functionality
-    private MusicBandConnection connection;
+    private final MusicBandConnection connection;
 
 
     public LoginFrame(MusicBandConnection connection){
         //design
-        northPanel = new JPanel();
-        westPanel = new JPanel();
-        eastPanel = new JPanel();
-        southPanel = new JPanel();
-        centerPanel = new JPanel();
-        mainLabel = new JLabel("LOGIN", SwingConstants.CENTER);
-        emojiLabel = new JLabel(new ImageIcon(getClass().getResource("emoji.png")), JLabel.RIGHT);
-        lockLabel = new JLabel(new ImageIcon(getClass().getResource("lock.png")), JLabel.RIGHT);
+        JPanel northPanel = new JPanel();
+        JPanel westPanel = new JPanel();
+        JPanel eastPanel = new JPanel();
+        JPanel southPanel = new JPanel();
+        JPanel centerPanel = new JPanel();
+        JLabel mainLabel = new JLabel("LOGIN", SwingConstants.CENTER);
+        JLabel emojiLabel = new JLabel(new ImageIcon(getClass().getResource("emoji.png")), JLabel.RIGHT);
+        JLabel lockLabel = new JLabel(new ImageIcon(getClass().getResource("lock.png")), JLabel.RIGHT);
         usernameField = new PlaceholderTextField();
         usernameField.setPlaceholder("Username");
         passwordField = new PlaceholderPasswordField();
         passwordField.setPlaceholder("Password");
-        signInButton = new JButton("Sign in");
+        JButton signInButton = new JButton("Sign in");
         signInButton.setPreferredSize(new Dimension(165 ,30));
-        registerButton = new JButton("Register");
+        JButton registerButton = new JButton("Register");
         registerButton.setPreferredSize(new Dimension(165, 30));
 
         Color mainColor = new Color(88, 119, 235);

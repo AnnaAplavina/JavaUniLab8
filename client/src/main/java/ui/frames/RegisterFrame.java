@@ -6,37 +6,25 @@ import javax.swing.*;
 import java.awt.*;
 
 public class RegisterFrame extends JFrame {
-    private JPanel northPanel;
-    private JPanel westPanel;
-    private JPanel eastPanel;
-    private JPanel southPanel;
-    private JPanel centerPanel;
-    private JLabel mainLabel;
-    private JLabel emojiLabel;
-    private JLabel lockLabel1;
-    private JLabel lockLabel2;
-    private PlaceholderTextField usernameField;
-    private PlaceholderTextField passwordField1;
-    private PlaceholderTextField passwordField2;
-    private JButton registerButton;
 
     public RegisterFrame(){
-        northPanel = new JPanel();
-        westPanel = new JPanel();
-        eastPanel = new JPanel();
-        southPanel = new JPanel();
-        centerPanel = new JPanel();
-        mainLabel = new JLabel("REGISTER", SwingConstants.CENTER);
-        emojiLabel = new JLabel(new ImageIcon(getClass().getResource("emoji.png")), JLabel.RIGHT);
-        lockLabel1 = new JLabel(new ImageIcon(getClass().getResource("lock.png")), JLabel.RIGHT);
-        lockLabel2 = new JLabel(new ImageIcon(getClass().getResource("lock.png")), JLabel.RIGHT);
-        usernameField = new PlaceholderTextField();
+        //design
+        JPanel northPanel = new JPanel();
+        JPanel westPanel = new JPanel();
+        JPanel eastPanel = new JPanel();
+        JPanel southPanel = new JPanel();
+        JPanel centerPanel = new JPanel();
+        JLabel mainLabel = new JLabel("REGISTER", SwingConstants.CENTER);
+        JLabel emojiLabel = new JLabel(new ImageIcon(getClass().getResource("emoji.png")), JLabel.RIGHT);
+        JLabel lockLabel1 = new JLabel(new ImageIcon(getClass().getResource("lock.png")), JLabel.RIGHT);
+        JLabel lockLabel2 = new JLabel(new ImageIcon(getClass().getResource("lock.png")), JLabel.RIGHT);
+        PlaceholderTextField usernameField = new PlaceholderTextField();
         usernameField.setPlaceholder("Username");
-        passwordField1 = new PlaceholderTextField();
+        PlaceholderTextField passwordField1 = new PlaceholderTextField();
         passwordField1.setPlaceholder("Password");
-        passwordField2 = new PlaceholderTextField();
+        PlaceholderTextField passwordField2 = new PlaceholderTextField();
         passwordField2.setPlaceholder("Password");
-        registerButton = new JButton("Register");
+        JButton registerButton = new JButton("Register");
         registerButton.setPreferredSize(new Dimension(165, 30));
 
         Color mainColor = new Color(88, 119, 235);

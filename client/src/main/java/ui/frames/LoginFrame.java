@@ -4,6 +4,7 @@ import ui.components.PlaceholderTextField;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class LoginFrame extends JFrame {
     private JPanel northPanel;
@@ -21,6 +22,7 @@ public class LoginFrame extends JFrame {
 
 
     public LoginFrame(){
+        //design
         northPanel = new JPanel();
         westPanel = new JPanel();
         eastPanel = new JPanel();
@@ -46,6 +48,7 @@ public class LoginFrame extends JFrame {
         int height = (int) screenSize.getHeight();
         this.setBounds(width/2 - 200, height/2 - 250, 400, 500);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setResizable(false);
 
         northPanel.setBackground(mainColor);
         northPanel.setPreferredSize(new Dimension(400, 110));
@@ -90,5 +93,17 @@ public class LoginFrame extends JFrame {
         registerHolder.add(registerButton);
         centerPanel.add(registerHolder);
         this.add(centerPanel);
+
+
+        //functionality
+        registerButton.addActionListener((e)->{
+            goToRegister();
+        });
+    }
+
+    private void goToRegister(){
+        setVisible(false);
+        RegisterFrame registerFrame = new RegisterFrame();
+        registerFrame.setVisible(true);
     }
 }

@@ -47,6 +47,7 @@ public class RegisterFrame extends JFrame {
         int height = (int) screenSize.getHeight();
         this.setBounds(width/2 - 200, height/2 - 250, 400, 500);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setResizable(false);
 
         northPanel.setBackground(mainColor);
         northPanel.setPreferredSize(new Dimension(400, 110));

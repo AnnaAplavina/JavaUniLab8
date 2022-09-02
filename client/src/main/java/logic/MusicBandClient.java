@@ -3,6 +3,8 @@ package logic;
 import collectionitems.BandCreator;
 import collectionitems.WrongArgumentException;
 import connection.MusicBandConnection;
+import connection.MusicBandResponse;
+import connection.ResponseStatus;
 import input.EndOfInputException;
 import input.InputSource;
 import java.io.IOException;
@@ -34,13 +36,13 @@ public class MusicBandClient {
                         password = inputSource.readString("Password");
                         connection.setUsername(username);
                         connection.setPassword(password);
-                        String response = connection.sendCommand("login");
-                        if(response.contains("Command executed successfully!")){
-                            System.out.println(response);
+                        MusicBandResponse response = connection.sendCommand("login");
+                        if(response.status == ResponseStatus.SUCCESS){
+                            System.out.println(response.response);
                             break;
                         }
                         else {
-                            System.out.println(response);
+                            System.out.println(response.response);
                             continue;
                         }
                     }
@@ -52,13 +54,13 @@ public class MusicBandClient {
                             password = pass1;
                             connection.setUsername(username);
                             connection.setPassword(password);
-                            String response = connection.sendCommand("register");
-                            if(response.contains("Command executed successfully!")){
-                                System.out.println(response);
+                            MusicBandResponse response = connection.sendCommand("register");
+                            if(response.status == ResponseStatus.SUCCESS){
+                                System.out.println(response.response);
                                 break;
                             }
                             else {
-                                System.out.println(response);
+                                System.out.println(response.response);
                             }
                         }
                     }
@@ -110,7 +112,7 @@ public class MusicBandClient {
                 }
                 else if(command.equals("info") || command.equals("show") ||
                         command.equals("clear")|| command.equals("print_descending")){
-                    System.out.println(connection.sendCommand(command));
+                    System.out.println(connection.sendCommand(command).response);
                 }
                 else if(command.equals("remove_by_id") || command.equals("count_less_than_genre")
                 || command.equals("filter_starts_with_description")){
@@ -118,17 +120,17 @@ public class MusicBandClient {
                         System.out.println("This command needs an argument");
                         continue;
                     }
-                    System.out.println(connection.sendCommand(command, argument));
+                    System.out.println(connection.sendCommand(command, argument).response);
                 }
                 else if(command.equals("add") || command.equals("add_if_max") || command.equals("add_if_min")){
-                    System.out.println(connection.sendCommand(command, null, bandCreator.createBand()));
+                    System.out.println(connection.sendCommand(command, null, bandCreator.createBand()).response);
                 }
                 else if(command.equals("update") || command.equals("insert_at")){
                     if(argument == null){
                         System.out.println("This command needs an argument");
                         continue;
                     }
-                    System.out.println(connection.sendCommand(command, argument, bandCreator.createBand()));
+                    System.out.println(connection.sendCommand(command, argument, bandCreator.createBand()).response);
                 }
                 else{
                     System.out.println("Unknown command");

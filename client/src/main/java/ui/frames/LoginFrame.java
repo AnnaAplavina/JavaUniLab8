@@ -1,5 +1,7 @@
 package ui.frames;
 import connection.MusicBandConnection;
+import connection.MusicBandResponse;
+import connection.ResponseStatus;
 import ui.components.PlaceholderPasswordField;
 import ui.components.PlaceholderTextField;
 import javax.swing.*;
@@ -97,12 +99,8 @@ public class LoginFrame extends JFrame {
 
         //functionality
         this.connection = connection;
-        registerButton.addActionListener(e -> {
-            goToRegister();
-        });
-        signInButton.addActionListener(e -> {
-            loginOnServer();
-        });
+        registerButton.addActionListener(e -> goToRegister());
+        signInButton.addActionListener(e -> loginOnServer());
     }
 
     private void goToRegister(){
@@ -117,12 +115,12 @@ public class LoginFrame extends JFrame {
             usernameCommentLabel.setText("Username can not be empty");
         }
         else{
-            String password = passwordField.getText();
+            String password = new String(passwordField.getPassword());
             connection.setUsername(username);
             connection.setPassword(password);
             try {
-                String response = connection.sendCommand("login");
-                if(response.contains("Failed to execute")){
+                MusicBandResponse response = connection.sendCommand("login");
+                if(response.status == ResponseStatus.FAIL){
                     serverResponseLabel.setText("Authorization failed");
                 }
                 else{

@@ -22,26 +22,26 @@ public class MusicBandConnection implements Closeable {
         this.password = password;
     }
 
-    public String sendCommand(String command) throws IOException, ClassNotFoundException, InterruptedException {
+    public MusicBandResponse sendCommand(String command) throws IOException, ClassNotFoundException, InterruptedException {
         MusicBandRequest musicBandRequest = new MusicBandRequest();
         musicBandRequest.username = username;
         musicBandRequest.password = password;
         musicBandRequest.name = command;
         sendToServer(musicBandRequest);
-        return getResponseString(getResponse());
+        return getResponse();
     }
 
-    public String sendCommand(String command, String arg) throws IOException, ClassNotFoundException {
+    public MusicBandResponse sendCommand(String command, String arg) throws IOException, ClassNotFoundException {
         MusicBandRequest musicBandRequest = new MusicBandRequest();
         musicBandRequest.username = username;
         musicBandRequest.password = password;
         musicBandRequest.name = command;
         musicBandRequest.arg = arg;
         sendToServer(musicBandRequest);
-        return getResponseString(getResponse());
+        return getResponse();
     }
 
-    public String sendCommand(String command, String arg, MusicBand band) throws IOException, ClassNotFoundException {
+    public MusicBandResponse sendCommand(String command, String arg, MusicBand band) throws IOException, ClassNotFoundException {
         MusicBandRequest musicBandRequest = new MusicBandRequest();
         musicBandRequest.username = username;
         musicBandRequest.password = password;
@@ -49,7 +49,7 @@ public class MusicBandConnection implements Closeable {
         musicBandRequest.arg = arg;
         musicBandRequest.band = band;
         sendToServer(musicBandRequest);
-        return getResponseString(getResponse());
+        return getResponse();
     }
 
     @Override
@@ -71,12 +71,5 @@ public class MusicBandConnection implements Closeable {
         DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
         ObjectInputStream objectInputStream = new ObjectInputStream(dataInputStream);
         return (MusicBandResponse) objectInputStream.readObject();
-    }
-
-    private String getResponseString(MusicBandResponse response){
-        if(response.status == ResponseStatus.SUCCESS){
-            return "Command executed successfully!\n" + response.response;
-        }
-        return "Failed to execute command!\n" + response.response;
     }
 }

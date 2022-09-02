@@ -1,12 +1,13 @@
 package ui.frames;
-
+import connection.MusicBandConnection;
+import ui.components.PlaceholderPasswordField;
 import ui.components.PlaceholderTextField;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 public class LoginFrame extends JFrame {
+    //design
     private JPanel northPanel;
     private JPanel westPanel;
     private JPanel eastPanel;
@@ -15,13 +16,18 @@ public class LoginFrame extends JFrame {
     private JLabel mainLabel;
     private JLabel emojiLabel;
     private JLabel lockLabel;
+    private JLabel usernameCommentLabel;
+    private JLabel serverResponseLabel;
     private PlaceholderTextField usernameField;
-    private PlaceholderTextField passwordField;
+    private PlaceholderPasswordField passwordField;
     private JButton signInButton;
     private JButton registerButton;
 
+    //functionality
+    private MusicBandConnection connection;
 
-    public LoginFrame(){
+
+    public LoginFrame(MusicBandConnection connection){
         //design
         northPanel = new JPanel();
         westPanel = new JPanel();
@@ -33,7 +39,7 @@ public class LoginFrame extends JFrame {
         lockLabel = new JLabel(new ImageIcon(getClass().getResource("lock.png")), JLabel.RIGHT);
         usernameField = new PlaceholderTextField();
         usernameField.setPlaceholder("Username");
-        passwordField = new PlaceholderTextField();
+        passwordField = new PlaceholderPasswordField();
         passwordField.setPlaceholder("Password");
         signInButton = new JButton("Sign in");
         signInButton.setPreferredSize(new Dimension(165 ,30));
@@ -78,9 +84,13 @@ public class LoginFrame extends JFrame {
         centerPanel.setPreferredSize(new Dimension(50, 50));
         centerPanel.setLayout(new GridLayout(9,1));
         centerPanel.add(usernameField);
-        centerPanel.add(new JLabel());
+        usernameCommentLabel = new JLabel();
+        usernameCommentLabel.setForeground(Color.RED);
+        centerPanel.add(usernameCommentLabel);
         centerPanel.add(passwordField);
-        centerPanel.add(new JLabel());
+        serverResponseLabel = new JLabel();
+        serverResponseLabel.setForeground(Color.RED);
+        centerPanel.add(serverResponseLabel);
         centerPanel.add(new JLabel());
         JPanel signInHolder = new JPanel();
         signInHolder.setBackground(mainColor);
@@ -96,8 +106,12 @@ public class LoginFrame extends JFrame {
 
 
         //functionality
-        registerButton.addActionListener((e)->{
+        this.connection = connection;
+        registerButton.addActionListener(e -> {
             goToRegister();
+        });
+        signInButton.addActionListener(e -> {
+            loginOnServer();
         });
     }
 
@@ -105,5 +119,33 @@ public class LoginFrame extends JFrame {
         setVisible(false);
         RegisterFrame registerFrame = new RegisterFrame();
         registerFrame.setVisible(true);
+    }
+
+    private void loginOnServer(){
+        String username = usernameField.getText();
+        if(username.equals("")){
+            usernameCommentLabel.setText("Username can not be empty");
+        }
+        else{
+            String password = passwordField.getText();
+            connection.setUsername(username);
+            connection.setPassword(password);
+            try {
+                String response = connection.sendCommand("login");
+                if(response.contains("Failed to execute")){
+                    serverResponseLabel.setText("Authorization failed");
+                }
+                else{
+                    serverResponseLabel.setForeground(Color.GREEN);
+                    serverResponseLabel.setText("Success");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

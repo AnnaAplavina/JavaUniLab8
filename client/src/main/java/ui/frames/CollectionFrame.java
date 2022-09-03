@@ -8,9 +8,25 @@ public class CollectionFrame extends JFrame {
     private JPanel topPanel = new JPanel();
     private JPanel middlePanel = new JPanel();
     private JPanel bottomPanel = new JPanel();
+    private JPanel bottomMainPanel = new JPanel();
     private JButton helpButton = new JButton();
     private JComboBox<String> languageComboBox = new JComboBox<>();
     private JLabel userLabel = new JLabel();
+    private JTable collectionTable = new JTable();
+    private JButton executeScriptButton = new JButton();
+    private JButton infoButton = new JButton();
+    private JButton printDescendingButton = new JButton();
+    private JButton insertAtButton = new JButton();
+    private JButton addIfMinButton = new JButton();
+    private JButton showButton = new JButton();
+    private JButton countLesserButton = new JButton();
+    private JButton addIfMaxButton = new JButton();
+    private JButton filterDescriptionButton = new JButton();
+    private JTextArea responseTextArea = new JTextArea();
+    private JButton clearButton = new JButton();
+    private JButton addButton = new JButton();
+    private JButton deleteButton = new JButton();
+
 
     public CollectionFrame(){
         Color mainColor = new Color(88, 119, 235);
@@ -31,8 +47,7 @@ public class CollectionFrame extends JFrame {
         topPanel.setPreferredSize(new Dimension(1200, 90));
         topPanel.setBackground(mainColor);
         mainPanel.add(topPanel, BorderLayout.NORTH);
-        GridBagLayout headerGridBagLayout = new GridBagLayout();
-        topPanel.setLayout(headerGridBagLayout);
+        topPanel.setLayout(new GridBagLayout());
         GridBagConstraints headerConstraints = new GridBagConstraints();
         headerConstraints.weightx = 1180;
         headerConstraints.weighty = 96;
@@ -81,7 +96,6 @@ public class CollectionFrame extends JFrame {
         userLabel.setFont(new Font("OPPO Sans", Font.ITALIC, 35));
         userLabel.setForeground(Color.WHITE);
         topPanel.add(userLabel, headerConstraints);
-
         topPanel.revalidate();
 
         middlePanel.setPreferredSize(new Dimension(1180, 450));
@@ -96,7 +110,7 @@ public class CollectionFrame extends JFrame {
         mainPanel.add(middlePanel);
 
         bottomPanel.setPreferredSize(new Dimension(1200, 260));
-        bottomPanel.setBackground(Color.YELLOW);
+        bottomPanel.setBackground(mainColor);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         bottomPanel.setLayout(new BorderLayout());
@@ -104,6 +118,99 @@ public class CollectionFrame extends JFrame {
         leftMarginBottom.setBackground(mainColor);
         leftMarginBottom.setPreferredSize(new Dimension(10, 260));
         bottomPanel.add(leftMarginBottom, BorderLayout.WEST);
+        JPanel topMarginBottom = new JPanel();
+        topMarginBottom.setBackground(mainColor);
+        bottomPanel.add(topMarginBottom, BorderLayout.NORTH);
+        bottomPanel.add(bottomMainPanel);
+        //table 10 rows 18 cols
+        //collection table 8 rows 12 cols
+        bottomMainPanel.setLayout(new GridBagLayout());
+        bottomMainPanel.setBackground(mainColor);
+        GridBagConstraints bottomConstraints = new GridBagConstraints();
+        bottomConstraints.gridx = 0;
+        bottomConstraints.gridy = 0;
+        bottomConstraints.gridheight = 8;
+        bottomConstraints.gridwidth = 12;
+        JScrollPane tableScrollablePane = new JScrollPane(collectionTable);
+        tableScrollablePane.setPreferredSize(new Dimension(795, 180));
+        bottomMainPanel.add(tableScrollablePane, bottomConstraints);
+        JPanel bottomButtonsPanel = new JPanel();
+        bottomButtonsPanel.setPreferredSize(new Dimension(370, 96));
+        bottomButtonsPanel.setBackground(mainColor);
+        bottomConstraints.gridx = 12;
+        bottomConstraints.gridy = 0;
+        bottomConstraints.gridheight = 4;
+        bottomConstraints.gridwidth = 6;
+        bottomMainPanel.add(bottomButtonsPanel, bottomConstraints);
 
+        Dimension buttonsSize = new Dimension(110, 27);
+        Font buttonsFont = new Font("Arial", Font.PLAIN, 9);
+        executeScriptButton.setText("ExecuteScript");
+        executeScriptButton.setFont(buttonsFont);
+        executeScriptButton.setPreferredSize(buttonsSize);
+        bottomButtonsPanel.add(executeScriptButton);
+        infoButton.setText("Info");
+        infoButton.setPreferredSize(buttonsSize);
+        infoButton.setFont(buttonsFont);
+        bottomButtonsPanel.add(infoButton);
+        printDescendingButton.setText("PrintDescending");
+        printDescendingButton.setPreferredSize(buttonsSize);
+        printDescendingButton.setFont(buttonsFont);
+        bottomButtonsPanel.add(printDescendingButton);
+        insertAtButton.setText("InsertAt");
+        insertAtButton.setPreferredSize(buttonsSize);
+        insertAtButton.setFont(buttonsFont);
+        bottomButtonsPanel.add(insertAtButton);
+        addIfMinButton.setText("AddIfMin");
+        addIfMinButton.setPreferredSize(buttonsSize);
+        addIfMinButton.setFont(buttonsFont);
+        bottomButtonsPanel.add(addIfMinButton);
+        showButton.setText("Show");
+        showButton.setPreferredSize(buttonsSize);
+        showButton.setFont(buttonsFont);
+        bottomButtonsPanel.add(showButton);
+        countLesserButton.setText("CountLesserGenre");
+        countLesserButton.setPreferredSize(buttonsSize);
+        countLesserButton.setFont(buttonsFont);
+        bottomButtonsPanel.add(countLesserButton);
+        addIfMaxButton.setText("AddIfMax");
+        addIfMaxButton.setPreferredSize(buttonsSize);
+        addIfMaxButton.setFont(buttonsFont);
+        bottomButtonsPanel.add(addIfMaxButton);
+        filterDescriptionButton.setText("FilterDescription");
+        filterDescriptionButton.setPreferredSize(buttonsSize);
+        filterDescriptionButton.setFont(buttonsFont);
+        bottomButtonsPanel.add(filterDescriptionButton);
+
+        bottomConstraints.gridx = 12;
+        bottomConstraints.gridy = 4;
+        bottomConstraints.gridheight = 8;
+        bottomConstraints.gridwidth = 6;
+        responseTextArea.setPreferredSize(new Dimension(380, 150));
+        bottomMainPanel.add(responseTextArea, bottomConstraints);
+
+        bottomConstraints.gridx = 0;
+        bottomConstraints.gridy = 9;
+        bottomConstraints.gridheight = 1;
+        bottomConstraints.gridwidth = 5;
+        JPanel emptyBottomPanel = new JPanel();
+        emptyBottomPanel.setBackground(mainColor);
+        emptyBottomPanel.setPreferredSize(new Dimension(500, 50));
+        bottomMainPanel.add(emptyBottomPanel, bottomConstraints);
+
+        bottomConstraints.gridx = 6;
+        bottomConstraints.gridy = 9;
+        bottomConstraints.gridheight = 1;
+        bottomConstraints.gridwidth = 5;
+        JPanel underTableButtonsPanel = new JPanel();
+        underTableButtonsPanel.setBackground(mainColor);
+        bottomMainPanel.add(underTableButtonsPanel, bottomConstraints);
+
+        clearButton.setText("Clear");
+        addButton.setText("Add");
+        deleteButton.setText("Delete");
+        underTableButtonsPanel.add(clearButton);
+        underTableButtonsPanel.add(addButton);
+        underTableButtonsPanel.add(deleteButton);
     }
 }

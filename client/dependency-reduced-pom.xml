@@ -21,7 +21,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>ClientMain</mainClass>
+                  <mainClass>ConsoleClientMain</mainClass>
                 </transformer>
               </transformers>
             </configuration>

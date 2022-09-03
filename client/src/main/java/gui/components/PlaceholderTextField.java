@@ -1,28 +1,27 @@
-package ui.components;
-
+package gui.components;
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.text.Document;
-import java.awt.*;
 
-public class PlaceholderPasswordField extends JPasswordField {
+public class PlaceholderTextField extends JTextField {
     private String placeholder;
 
-    public PlaceholderPasswordField() {
+    public PlaceholderTextField() {
     }
 
-    public PlaceholderPasswordField(final Document pDoc, final String pText, final int pColumns) {
+    public PlaceholderTextField(final Document pDoc, final String pText, final int pColumns) {
         super(pDoc, pText, pColumns);
     }
 
-    public PlaceholderPasswordField(final int pColumns) {
+    public PlaceholderTextField(final int pColumns) {
         super(pColumns);
     }
 
-    public PlaceholderPasswordField(final String pText) {
+    public PlaceholderTextField(final String pText) {
         super(pText);
     }
 
-    public PlaceholderPasswordField(final String pText, final int pColumns) {
+    public PlaceholderTextField(final String pText, final int pColumns) {
         super(pText, pColumns);
     }
 
@@ -50,4 +49,5 @@ public class PlaceholderPasswordField extends JPasswordField {
     public void setPlaceholder(final String s) {
         placeholder = s;
     }
+
 }

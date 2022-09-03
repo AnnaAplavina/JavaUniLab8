@@ -1,4 +1,4 @@
-package input;
+package console.input;
 
 /**
  * Thrown when reading from user is not possible

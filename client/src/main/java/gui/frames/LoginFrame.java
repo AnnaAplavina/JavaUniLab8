@@ -1,9 +1,9 @@
-package ui.frames;
+package gui.frames;
 import connection.MusicBandConnection;
 import connection.MusicBandResponse;
 import connection.ResponseStatus;
-import ui.components.PlaceholderPasswordField;
-import ui.components.PlaceholderTextField;
+import gui.components.PlaceholderPasswordField;
+import gui.components.PlaceholderTextField;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -33,7 +33,7 @@ public class LoginFrame extends JFrame {
         usernameField.setPlaceholder("Username");
         passwordField = new PlaceholderPasswordField();
         passwordField.setPlaceholder("Password");
-        JButton signInButton = new JButton("Sign in");
+        JButton signInButton = new JButton("SignIn");
         signInButton.setPreferredSize(new Dimension(165 ,30));
         JButton registerButton = new JButton("Register");
         registerButton.setPreferredSize(new Dimension(165, 30));
@@ -112,7 +112,7 @@ public class LoginFrame extends JFrame {
     private void loginOnServer(){
         String username = usernameField.getText().trim();
         if(username.equals("")){
-            usernameCommentLabel.setText("Username can not be empty");
+            usernameCommentLabel.setText("EmptyUsername");
         }
         else{
             String password = new String(passwordField.getPassword());
@@ -121,7 +121,7 @@ public class LoginFrame extends JFrame {
             try {
                 MusicBandResponse response = connection.sendCommand("login");
                 if(response.status == ResponseStatus.FAIL){
-                    serverResponseLabel.setText("Authorization failed");
+                    serverResponseLabel.setText("AuthorizationFail");
                 }
                 else{
                     setVisible(false);

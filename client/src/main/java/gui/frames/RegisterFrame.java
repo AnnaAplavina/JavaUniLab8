@@ -1,10 +1,10 @@
-package ui.frames;
+package gui.frames;
 
 import connection.MusicBandConnection;
 import connection.MusicBandResponse;
 import connection.ResponseStatus;
-import ui.components.PlaceholderPasswordField;
-import ui.components.PlaceholderTextField;
+import gui.components.PlaceholderPasswordField;
+import gui.components.PlaceholderTextField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,7 +34,7 @@ public class RegisterFrame extends JFrame {
         JLabel lockLabel2 = new JLabel(new ImageIcon(getClass().getResource("lock.png")), JLabel.RIGHT);
         usernameField.setPlaceholder("Username");
         passwordField1.setPlaceholder("Password");
-        passwordField2.setPlaceholder("Repeat password");
+        passwordField2.setPlaceholder("RepeatPassword");
         JButton registerButton = new JButton("Register");
         registerButton.setPreferredSize(new Dimension(165, 30));
 
@@ -101,16 +101,16 @@ public class RegisterFrame extends JFrame {
     private void registerOnServer(){
         String username = usernameField.getText().trim();
         if(username.equals("")){
-            usernameCommentLabel.setText("Username field can not be empty");
+            usernameCommentLabel.setText("EmptyUsername");
         }
         else {
             String password1 = new String(passwordField1.getPassword());
             String password2 = new String(passwordField2.getPassword());
             if(password1.equals("")){
-                passwordCommentLabel.setText("Password field can not be empty");
+                passwordCommentLabel.setText("EmptyPassword");
             }
             else if(!password1.equals(password2)){
-                passwordCommentLabel.setText("Passwords are not the same");
+                passwordCommentLabel.setText("NotSamePasswords");
             }
             else{
                 connection.setUsername(username);
@@ -123,7 +123,7 @@ public class RegisterFrame extends JFrame {
                         collectionFrame.setVisible(true);
                     }
                     else{
-                        passwordCommentLabel.setText("This username is already used");
+                        passwordCommentLabel.setText("UsernameUsed");
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

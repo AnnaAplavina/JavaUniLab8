@@ -1,22 +1,22 @@
-package logic;
+package console;
 
-import collectionitems.BandCreator;
+import console.input.BandCreator;
 import collectionitems.WrongArgumentException;
 import connection.MusicBandConnection;
 import connection.MusicBandResponse;
 import connection.ResponseStatus;
-import input.EndOfInputException;
-import input.InputSource;
+import console.input.EndOfInputException;
+import console.input.InputSource;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
-public class MusicBandClient {
+public class MusicBandConsoleClient {
     private String ip;
     private int port;
     private InputSource inputSource;
     private BandCreator bandCreator;
 
-    public MusicBandClient(String ip, int port){
+    public MusicBandConsoleClient(String ip, int port){
         this.ip = ip;
         this.port = port;
         this.inputSource = new InputSource();

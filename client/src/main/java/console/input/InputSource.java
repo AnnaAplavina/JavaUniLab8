@@ -1,4 +1,4 @@
-package input;
+package console.input;
 
 import collectionitems.WrongArgumentException;
 

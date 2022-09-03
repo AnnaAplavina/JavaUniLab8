@@ -1,7 +1,6 @@
-package collectionitems;
+package console.input;
 
-import input.EndOfInputException;
-import input.InputSource;
+import collectionitems.*;
 
 /**
  * Class for creating new bands with fields provided by the user

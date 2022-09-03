@@ -1,8 +1,7 @@
-package ui.frames;
+package gui.frames;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Locale;
 
 public class CollectionFrame extends JFrame {
     private JPanel mainPanel = new JPanel();

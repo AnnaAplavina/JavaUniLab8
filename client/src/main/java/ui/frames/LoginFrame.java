@@ -124,8 +124,9 @@ public class LoginFrame extends JFrame {
                     serverResponseLabel.setText("Authorization failed");
                 }
                 else{
-                    serverResponseLabel.setForeground(Color.GREEN);
-                    serverResponseLabel.setText("Success");
+                    setVisible(false);
+                    CollectionFrame collectionFrame = new CollectionFrame(username);
+                    collectionFrame.setVisible(true);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

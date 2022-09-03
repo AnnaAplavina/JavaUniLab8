@@ -2,6 +2,7 @@ package ui.frames;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Locale;
 
 public class CollectionFrame extends JFrame {
     private JPanel mainPanel = new JPanel();
@@ -28,7 +29,7 @@ public class CollectionFrame extends JFrame {
     private JButton deleteButton = new JButton();
 
 
-    public CollectionFrame(){
+    public CollectionFrame(String username){
         Color mainColor = new Color(88, 119, 235);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -89,7 +90,7 @@ public class CollectionFrame extends JFrame {
         headerConstraints.gridy = 0;
         headerConstraints.gridheight = 3;
         headerConstraints.gridwidth = 1;
-        userLabel.setText("USERNAME");
+        userLabel.setText(username);
         ImageIcon userIcon = new ImageIcon(getClass().getResource("user.png"));
         userLabel.setIcon(userIcon);
         userLabel.setHorizontalTextPosition(JLabel.LEFT);

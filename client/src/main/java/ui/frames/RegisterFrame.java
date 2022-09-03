@@ -118,7 +118,9 @@ public class RegisterFrame extends JFrame {
                 try {
                     MusicBandResponse response = connection.sendCommand("register");
                     if(response.status == ResponseStatus.SUCCESS){
-                        System.out.println("Registration successful");
+                        setVisible(false);
+                        CollectionFrame collectionFrame = new CollectionFrame(username);
+                        collectionFrame.setVisible(true);
                     }
                     else{
                         passwordCommentLabel.setText("This username is already used");

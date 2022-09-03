@@ -105,12 +105,12 @@ public class LoginFrame extends JFrame {
 
     private void goToRegister(){
         setVisible(false);
-        RegisterFrame registerFrame = new RegisterFrame();
+        RegisterFrame registerFrame = new RegisterFrame(connection);
         registerFrame.setVisible(true);
     }
 
     private void loginOnServer(){
-        String username = usernameField.getText();
+        String username = usernameField.getText().trim();
         if(username.equals("")){
             usernameCommentLabel.setText("Username can not be empty");
         }

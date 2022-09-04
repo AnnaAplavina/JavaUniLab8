@@ -18,11 +18,9 @@ public class CollectionFrame extends JFrame {
     private JButton printDescendingButton = new JButton();
     private JButton insertAtButton = new JButton();
     private JButton addIfMinButton = new JButton();
-    private JButton showButton = new JButton();
     private JButton countLesserButton = new JButton();
     private JButton addIfMaxButton = new JButton();
     private JButton filterDescriptionButton = new JButton();
-    private JTextArea responseTextArea = new JTextArea();
     private JButton clearButton = new JButton();
     private JButton addButton = new JButton();
     private JButton deleteButton = new JButton();
@@ -165,10 +163,10 @@ public class CollectionFrame extends JFrame {
         addIfMinButton.setPreferredSize(buttonsSize);
         addIfMinButton.setFont(buttonsFont);
         bottomButtonsPanel.add(addIfMinButton);
-        showButton.setText("Show");
-        showButton.setPreferredSize(buttonsSize);
-        showButton.setFont(buttonsFont);
-        bottomButtonsPanel.add(showButton);
+        clearButton.setText("Clear");
+        clearButton.setPreferredSize(buttonsSize);
+        clearButton.setFont(buttonsFont);
+        bottomButtonsPanel.add(clearButton);
         countLesserButton.setText("CountLesserGenre");
         countLesserButton.setPreferredSize(buttonsSize);
         countLesserButton.setFont(buttonsFont);
@@ -181,13 +179,6 @@ public class CollectionFrame extends JFrame {
         filterDescriptionButton.setPreferredSize(buttonsSize);
         filterDescriptionButton.setFont(buttonsFont);
         bottomButtonsPanel.add(filterDescriptionButton);
-
-        bottomConstraints.gridx = 12;
-        bottomConstraints.gridy = 4;
-        bottomConstraints.gridheight = 8;
-        bottomConstraints.gridwidth = 6;
-        responseTextArea.setPreferredSize(new Dimension(380, 150));
-        bottomMainPanel.add(responseTextArea, bottomConstraints);
 
         bottomConstraints.gridx = 0;
         bottomConstraints.gridy = 9;
@@ -206,10 +197,8 @@ public class CollectionFrame extends JFrame {
         underTableButtonsPanel.setBackground(mainColor);
         bottomMainPanel.add(underTableButtonsPanel, bottomConstraints);
 
-        clearButton.setText("Clear");
         addButton.setText("Add");
         deleteButton.setText("Delete");
-        underTableButtonsPanel.add(clearButton);
         underTableButtonsPanel.add(addButton);
         underTableButtonsPanel.add(deleteButton);
     }

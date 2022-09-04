@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ResourceBundleManager">
+    <file url="file://$PROJECT_DIR$/client/src/main/resources/langs_en_IE.properties" />
+    <file url="file://$PROJECT_DIR$/client/src/main/resources/langs_lt_LT.properties" />
+    <file url="file://$PROJECT_DIR$/client/src/main/resources/langs_no_NO.properties" />
+    <file url="file://$PROJECT_DIR$/client/src/main/resources/langs_ru_RU.properties" />
+    <custom-resource-bundle>
+      <file value="file://$PROJECT_DIR$/client/src/main/resources/langs_en_IE.properties" />
+      <file value="file://$PROJECT_DIR$/client/src/main/resources/langs_lt_LT.properties" />
+      <file value="file://$PROJECT_DIR$/client/src/main/resources/langs_no_NO.properties" />
+      <file value="file://$PROJECT_DIR$/client/src/main/resources/langs_ru_RU.properties" />
+      <base-name>langs</base-name>
+    </custom-resource-bundle>
+  </component>
+</project>

@@ -4,9 +4,12 @@ import connection.MusicBandResponse;
 import connection.ResponseStatus;
 import gui.components.PlaceholderPasswordField;
 import gui.components.PlaceholderTextField;
+import localization.BundlesManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.Locale;
 
 public class LoginFrame extends JFrame {
     //design
@@ -17,25 +20,29 @@ public class LoginFrame extends JFrame {
 
     //functionality
     private final MusicBandConnection connection;
+    private final BundlesManager bundlesManager;
 
 
-    public LoginFrame(MusicBandConnection connection){
+    public LoginFrame(MusicBandConnection connection , BundlesManager bundlesManager){
+        this.bundlesManager = bundlesManager;
+
+
         //design
         JPanel northPanel = new JPanel();
         JPanel westPanel = new JPanel();
         JPanel eastPanel = new JPanel();
         JPanel southPanel = new JPanel();
         JPanel centerPanel = new JPanel();
-        JLabel mainLabel = new JLabel("LOGIN", SwingConstants.CENTER);
+        JLabel mainLabel = new JLabel(bundlesManager.getValue("LoginLabel").toUpperCase(Locale.ROOT), SwingConstants.CENTER);
         JLabel emojiLabel = new JLabel(new ImageIcon(getClass().getResource("emoji.png")), JLabel.RIGHT);
         JLabel lockLabel = new JLabel(new ImageIcon(getClass().getResource("lock.png")), JLabel.RIGHT);
         usernameField = new PlaceholderTextField();
-        usernameField.setPlaceholder("Username");
+        usernameField.setPlaceholder(bundlesManager.getValue("Username"));
         passwordField = new PlaceholderPasswordField();
-        passwordField.setPlaceholder("Password");
-        JButton signInButton = new JButton("SignIn");
+        passwordField.setPlaceholder(bundlesManager.getValue("Password"));
+        JButton signInButton = new JButton(bundlesManager.getValue("SignIn"));
         signInButton.setPreferredSize(new Dimension(165 ,30));
-        JButton registerButton = new JButton("Register");
+        JButton registerButton = new JButton(bundlesManager.getValue("Register"));
         registerButton.setPreferredSize(new Dimension(165, 30));
 
         Color mainColor = new Color(88, 119, 235);
@@ -112,7 +119,7 @@ public class LoginFrame extends JFrame {
     private void loginOnServer(){
         String username = usernameField.getText().trim();
         if(username.equals("")){
-            usernameCommentLabel.setText("EmptyUsername");
+            usernameCommentLabel.setText(bundlesManager.getValue("EmptyUsername"));
         }
         else{
             String password = new String(passwordField.getPassword());
@@ -121,7 +128,7 @@ public class LoginFrame extends JFrame {
             try {
                 MusicBandResponse response = connection.sendCommand("login");
                 if(response.status == ResponseStatus.FAIL){
-                    serverResponseLabel.setText("AuthorizationFail");
+                    serverResponseLabel.setText(bundlesManager.getValue("AuthorizationFail"));
                 }
                 else{
                     setVisible(false);

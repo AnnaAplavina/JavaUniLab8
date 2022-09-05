@@ -24,6 +24,8 @@ public class MusicBand implements Serializable, Comparable<MusicBand> {
     private MusicGenre genre; //Поле может быть null
     private Album bestAlbum; //Поле может быть null
 
+    private String ownerUsername;
+
     public MusicBand(){
         this.id = 1;
         name="Default";
@@ -34,6 +36,14 @@ public class MusicBand implements Serializable, Comparable<MusicBand> {
         description = null;
         genre = null;
         bestAlbum = null;
+    }
+
+    public void setOwnerUsername(String owner){
+        this.ownerUsername = owner;
+    }
+
+    public String getOwnerUsername(){
+        return ownerUsername;
     }
 
     @XmlAttribute

@@ -86,6 +86,7 @@ public class MusicBandDao {
                         bestAlbum.setSales(bestAlbumSales);
                         band.setBestAlbum(bestAlbum);
                     }
+                    band.setOwnerUsername(resultSet.getString("owner"));
                     bands.add(band);
                 }
                 catch (WrongArgumentException ex){

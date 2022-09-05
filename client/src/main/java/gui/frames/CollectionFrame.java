@@ -31,6 +31,7 @@ public class CollectionFrame extends JFrame {
     private JButton clearButton = new JButton();
     private JButton addButton = new JButton();
     private JButton deleteButton = new JButton();
+    private JButton editButton = new JButton();
 
     private final MusicBandConnection connection;
     private List<MusicBand> bands;
@@ -202,8 +203,10 @@ public class CollectionFrame extends JFrame {
 
         addButton.setText("Add");
         deleteButton.setText("Delete");
+        editButton.setText("Edit");
         underTableButtonsPanel.add(addButton);
         underTableButtonsPanel.add(deleteButton);
+        underTableButtonsPanel.add(editButton);
 
         //functionality
         this.connection = connection;

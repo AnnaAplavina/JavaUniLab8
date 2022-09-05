@@ -20,7 +20,7 @@ public class MusicBandTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 10;
+        return 11;
     }
 
     @Override
@@ -82,6 +82,9 @@ public class MusicBandTableModel extends AbstractTableModel {
                 };
             }
         }
+        if(columnIndex == 10){
+            return band.getOwnerUsername();
+        }
         return "!";
     }
 
@@ -114,8 +117,11 @@ public class MusicBandTableModel extends AbstractTableModel {
         if(c==8){
             return "Genre";
         }
-        else {
+        if(c==9){
             return "Best Album";
+        }
+        else {
+            return "Creator";
         }
     }
 

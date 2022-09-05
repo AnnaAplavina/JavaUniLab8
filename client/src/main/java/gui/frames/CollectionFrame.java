@@ -22,12 +22,10 @@ public class CollectionFrame extends JFrame {
     private JTable collectionTable;
     private JButton executeScriptButton = new JButton();
     private JButton infoButton = new JButton();
-    private JButton printDescendingButton = new JButton();
     private JButton insertAtButton = new JButton();
     private JButton addIfMinButton = new JButton();
     private JButton countLesserButton = new JButton();
     private JButton addIfMaxButton = new JButton();
-    private JButton filterDescriptionButton = new JButton();
     private JButton clearButton = new JButton();
     private JButton addButton = new JButton();
     private JButton deleteButton = new JButton();
@@ -155,10 +153,6 @@ public class CollectionFrame extends JFrame {
         infoButton.setPreferredSize(buttonsSize);
         infoButton.setFont(buttonsFont);
         bottomButtonsPanel.add(infoButton);
-        printDescendingButton.setText("PrintDescending");
-        printDescendingButton.setPreferredSize(buttonsSize);
-        printDescendingButton.setFont(buttonsFont);
-        bottomButtonsPanel.add(printDescendingButton);
         insertAtButton.setText("InsertAt");
         insertAtButton.setPreferredSize(buttonsSize);
         insertAtButton.setFont(buttonsFont);
@@ -179,10 +173,6 @@ public class CollectionFrame extends JFrame {
         addIfMaxButton.setPreferredSize(buttonsSize);
         addIfMaxButton.setFont(buttonsFont);
         bottomButtonsPanel.add(addIfMaxButton);
-        filterDescriptionButton.setText("FilterDescription");
-        filterDescriptionButton.setPreferredSize(buttonsSize);
-        filterDescriptionButton.setFont(buttonsFont);
-        bottomButtonsPanel.add(filterDescriptionButton);
 
         bottomConstraints.gridx = 0;
         bottomConstraints.gridy = 9;

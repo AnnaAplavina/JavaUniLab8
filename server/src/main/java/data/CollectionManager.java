@@ -81,7 +81,8 @@ public class CollectionManager {
     public void addNewElementFromUser(MusicBand band, String username) throws QueryExecutionException {
         readWriteLock.writeLock().lock();
         try{
-            musicBandDao.addBandToDb(band, username);
+            band.setId(musicBandDao.addBandToDb(band, username));
+            collection.add(band);
         } finally {
             readWriteLock.writeLock().unlock();
         }
@@ -99,7 +100,7 @@ public class CollectionManager {
             if(index >= collection.size()){
                 throw new ArrayIndexOutOfBoundsException();
             }
-            musicBandDao.addBandToDb(band, username);
+            band.setId(musicBandDao.addBandToDb(band, username));
             collection.add(index, band);
         } finally {
             readWriteLock.writeLock().unlock();
@@ -223,12 +224,12 @@ public class CollectionManager {
                 MusicBand maxBand;
                 maxBand = getMax();
                 if(newBand.compareTo(maxBand) > 0){
-                    musicBandDao.addBandToDb(newBand, username);
+                    newBand.setId(musicBandDao.addBandToDb(newBand, username));
                     collection.add(newBand);
                     return true;
                 }
             } catch (EmptyCollectionException e) {
-                musicBandDao.addBandToDb(newBand, username);
+                newBand.setId(musicBandDao.addBandToDb(newBand, username));;
                 collection.add(newBand);
                 return true;
             }
@@ -249,12 +250,12 @@ public class CollectionManager {
                 MusicBand minBand;
                 minBand = getMin();
                 if(newBand.compareTo(minBand) < 0){
-                    musicBandDao.addBandToDb(newBand, username);
+                    newBand.setId(musicBandDao.addBandToDb(newBand, username));
                     collection.add(newBand);
                     return true;
                 }
             } catch (EmptyCollectionException e) {
-                musicBandDao.addBandToDb(newBand, username);
+                newBand.setId(musicBandDao.addBandToDb(newBand, username));
                 collection.add(newBand);
                 return true;
             }
@@ -315,6 +316,14 @@ public class CollectionManager {
         } finally {
             readWriteLock.readLock().unlock();
         }
+    }
 
+    public List<MusicBand> getAll(){
+        readWriteLock.readLock().lock();
+        try{
+            return new ArrayList<>(collection);
+        } finally {
+            readWriteLock.readLock().unlock();
+        }
     }
 }

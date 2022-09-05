@@ -1,7 +1,14 @@
 package gui.frames;
 
+import collectionitems.MusicBand;
+import connection.MusicBandConnection;
+import gui.collectiontable.MultiLineTableCellRenderer;
+import gui.collectiontable.MusicBandTableModel;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.util.List;
 
 public class CollectionFrame extends JFrame {
     private JPanel mainPanel = new JPanel();
@@ -12,7 +19,7 @@ public class CollectionFrame extends JFrame {
     private JButton helpButton = new JButton();
     private JComboBox<String> languageComboBox = new JComboBox<>();
     private JLabel userLabel = new JLabel();
-    private JTable collectionTable = new JTable();
+    private JTable collectionTable;
     private JButton executeScriptButton = new JButton();
     private JButton infoButton = new JButton();
     private JButton printDescendingButton = new JButton();
@@ -25,8 +32,11 @@ public class CollectionFrame extends JFrame {
     private JButton addButton = new JButton();
     private JButton deleteButton = new JButton();
 
+    private final MusicBandConnection connection;
+    private List<MusicBand> bands;
+    private MusicBandTableModel tableModel;
 
-    public CollectionFrame(String username){
+    public CollectionFrame(String username, MusicBandConnection connection) throws IOException, ClassNotFoundException, InterruptedException {
         Color mainColor = new Color(88, 119, 235);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -125,13 +135,6 @@ public class CollectionFrame extends JFrame {
         bottomMainPanel.setLayout(new GridBagLayout());
         bottomMainPanel.setBackground(mainColor);
         GridBagConstraints bottomConstraints = new GridBagConstraints();
-        bottomConstraints.gridx = 0;
-        bottomConstraints.gridy = 0;
-        bottomConstraints.gridheight = 8;
-        bottomConstraints.gridwidth = 12;
-        JScrollPane tableScrollablePane = new JScrollPane(collectionTable);
-        tableScrollablePane.setPreferredSize(new Dimension(795, 180));
-        bottomMainPanel.add(tableScrollablePane, bottomConstraints);
         JPanel bottomButtonsPanel = new JPanel();
         bottomButtonsPanel.setPreferredSize(new Dimension(370, 96));
         bottomButtonsPanel.setBackground(mainColor);
@@ -201,5 +204,21 @@ public class CollectionFrame extends JFrame {
         deleteButton.setText("Delete");
         underTableButtonsPanel.add(addButton);
         underTableButtonsPanel.add(deleteButton);
+
+        //functionality
+        this.connection = connection;
+        tableModel = new MusicBandTableModel(connection.sendCommand("load").musicBandList);
+        collectionTable = new JTable(tableModel);
+        MultiLineTableCellRenderer renderer = new MultiLineTableCellRenderer();
+        collectionTable.setDefaultRenderer(String[].class, renderer);
+        collectionTable.setRowHeight(75);
+
+        bottomConstraints.gridx = 0;
+        bottomConstraints.gridy = 0;
+        bottomConstraints.gridheight = 8;
+        bottomConstraints.gridwidth = 12;
+        JScrollPane tableScrollablePane = new JScrollPane(collectionTable);
+        tableScrollablePane.setPreferredSize(new Dimension(795, 180));
+        bottomMainPanel.add(tableScrollablePane, bottomConstraints);
     }
 }

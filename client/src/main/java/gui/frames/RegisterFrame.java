@@ -119,7 +119,7 @@ public class RegisterFrame extends JFrame {
                     MusicBandResponse response = connection.sendCommand("register");
                     if(response.status == ResponseStatus.SUCCESS){
                         setVisible(false);
-                        CollectionFrame collectionFrame = new CollectionFrame(username);
+                        CollectionFrame collectionFrame = new CollectionFrame(username, connection);
                         collectionFrame.setVisible(true);
                     }
                     else{

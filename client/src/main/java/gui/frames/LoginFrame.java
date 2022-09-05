@@ -5,7 +5,6 @@ import connection.ResponseStatus;
 import gui.components.PlaceholderPasswordField;
 import gui.components.PlaceholderTextField;
 import localization.BundlesManager;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -25,7 +24,6 @@ public class LoginFrame extends JFrame {
 
     public LoginFrame(MusicBandConnection connection , BundlesManager bundlesManager){
         this.bundlesManager = bundlesManager;
-
 
         //design
         JPanel northPanel = new JPanel();
@@ -132,7 +130,7 @@ public class LoginFrame extends JFrame {
                 }
                 else{
                     setVisible(false);
-                    CollectionFrame collectionFrame = new CollectionFrame(username);
+                    CollectionFrame collectionFrame = new CollectionFrame(username, connection);
                     collectionFrame.setVisible(true);
                 }
             } catch (IOException e) {

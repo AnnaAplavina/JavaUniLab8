@@ -56,6 +56,11 @@ public class CommandsExecutor {
             response.response = "Authorization successful";
             return response;
         }
+        if(command.name.equals("load")){
+            response.status = ResponseStatus.SUCCESS;
+            response.musicBandList = collectionManager.getAll();
+            return response;
+        }
         Command executableCommand = getCommandObject(command, command.username);
         try {
             String executionResult = executableCommand.execute();

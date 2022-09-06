@@ -213,5 +213,7 @@ public class CollectionFrame extends JFrame {
         JScrollPane tableScrollablePane = new JScrollPane(collectionTable);
         tableScrollablePane.setPreferredSize(new Dimension(795, 180));
         bottomMainPanel.add(tableScrollablePane, bottomConstraints);
+
+        helpButton.addActionListener( e -> JOptionPane.showMessageDialog(null, "HelpText"));
     }
 }

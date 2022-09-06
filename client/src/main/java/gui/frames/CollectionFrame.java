@@ -215,5 +215,16 @@ public class CollectionFrame extends JFrame {
         bottomMainPanel.add(tableScrollablePane, bottomConstraints);
 
         helpButton.addActionListener( e -> JOptionPane.showMessageDialog(null, "HelpText"));
+        infoButton.addActionListener( e -> {
+            try {
+                JOptionPane.showMessageDialog(null, connection.sendCommand("info").response);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(null, "ConnectionLost");
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        });
     }
 }

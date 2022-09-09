@@ -145,7 +145,7 @@ public class MusicBandConsoleClient {
             catch (IOException ex){
                 System.out.println("Can't connect to server");
             }
-            catch (ClassNotFoundException | InterruptedException ex){
+            catch (ClassNotFoundException ex){
                 ex.printStackTrace();
             }
     }

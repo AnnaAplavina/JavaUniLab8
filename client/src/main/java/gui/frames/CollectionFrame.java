@@ -2,11 +2,17 @@ package gui.frames;
 
 import collectionitems.MusicBand;
 import connection.MusicBandConnection;
+import console.input.EndOfInputException;
+import console.util.scriptexecution.ReadingScriptFileException;
+import console.util.scriptexecution.ScriptExecutor;
 import gui.collectiontable.MultiLineTableCellRenderer;
 import gui.collectiontable.MusicBandTableModel;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -222,8 +228,25 @@ public class CollectionFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, "ConnectionLost");
             } catch (ClassNotFoundException ex) {
                 ex.printStackTrace();
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
+            }
+        });
+        executeScriptButton.addActionListener(e -> {
+            JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+            int returnValue = jfc.showOpenDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = jfc.getSelectedFile();
+                try {
+                    ScriptExecutor.executeScript(connection, selectedFile);
+                    JOptionPane.showMessageDialog(null, "ScriptExecutedSuccessfully");
+                } catch (FileNotFoundException ex) {
+                    JOptionPane.showMessageDialog(null, "ScriptFileNotFound");
+                } catch (ReadingScriptFileException ex) {
+                    JOptionPane.showMessageDialog(null, "CouldNotReadScriptFile");
+                } catch (EndOfInputException ex) {
+                    JOptionPane.showMessageDialog(null, "EndOfInput");
+                } catch (ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
     }

@@ -22,7 +22,7 @@ public class MusicBandConnection implements Closeable {
         this.password = password;
     }
 
-    public MusicBandResponse sendCommand(String command) throws IOException, ClassNotFoundException, InterruptedException {
+    public MusicBandResponse sendCommand(String command) throws IOException, ClassNotFoundException{
         MusicBandRequest musicBandRequest = new MusicBandRequest();
         musicBandRequest.username = username;
         musicBandRequest.password = password;

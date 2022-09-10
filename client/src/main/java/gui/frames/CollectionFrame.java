@@ -5,11 +5,13 @@ import connection.MusicBandConnection;
 import console.input.EndOfInputException;
 import console.util.scriptexecution.ReadingScriptFileException;
 import console.util.scriptexecution.ScriptExecutor;
+import gui.collectiontable.DescriptionRowFilter;
 import gui.collectiontable.MultiLineTableCellRenderer;
 import gui.collectiontable.MusicBandTableModel;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,6 +38,7 @@ public class CollectionFrame extends JFrame {
     private JButton addButton = new JButton();
     private JButton deleteButton = new JButton();
     private JButton editButton = new JButton();
+    private JButton filterDescriptionButton = new JButton();
 
     private final MusicBandConnection connection;
     private List<MusicBand> bands;
@@ -183,16 +186,16 @@ public class CollectionFrame extends JFrame {
         bottomConstraints.gridx = 0;
         bottomConstraints.gridy = 9;
         bottomConstraints.gridheight = 1;
-        bottomConstraints.gridwidth = 5;
+        bottomConstraints.gridwidth = 3;
         JPanel emptyBottomPanel = new JPanel();
         emptyBottomPanel.setBackground(mainColor);
-        emptyBottomPanel.setPreferredSize(new Dimension(500, 50));
+        emptyBottomPanel.setPreferredSize(new Dimension(300, 50));
         bottomMainPanel.add(emptyBottomPanel, bottomConstraints);
 
-        bottomConstraints.gridx = 6;
+        bottomConstraints.gridx = 5;
         bottomConstraints.gridy = 9;
         bottomConstraints.gridheight = 1;
-        bottomConstraints.gridwidth = 5;
+        bottomConstraints.gridwidth = 6;
         JPanel underTableButtonsPanel = new JPanel();
         underTableButtonsPanel.setBackground(mainColor);
         bottomMainPanel.add(underTableButtonsPanel, bottomConstraints);
@@ -200,14 +203,18 @@ public class CollectionFrame extends JFrame {
         addButton.setText("Add");
         deleteButton.setText("Delete");
         editButton.setText("Edit");
+        filterDescriptionButton.setText("FilterDescription");
         underTableButtonsPanel.add(addButton);
         underTableButtonsPanel.add(deleteButton);
         underTableButtonsPanel.add(editButton);
+        underTableButtonsPanel.add(filterDescriptionButton);
 
         //functionality
         this.connection = connection;
         tableModel = new MusicBandTableModel(connection.sendCommand("load").musicBandList);
         collectionTable = new JTable(tableModel);
+        TableRowSorter tableRowSorter = new TableRowSorter(tableModel);
+        collectionTable.setRowSorter(tableRowSorter);
         MultiLineTableCellRenderer renderer = new MultiLineTableCellRenderer();
         collectionTable.setDefaultRenderer(String[].class, renderer);
         collectionTable.setRowHeight(75);
@@ -248,6 +255,10 @@ public class CollectionFrame extends JFrame {
                     ex.printStackTrace();
                 }
             }
+        });
+        filterDescriptionButton.addActionListener(e -> {
+            String descriptionStart = JOptionPane.showInputDialog(this, "DescriptionStarts");
+            tableRowSorter.setRowFilter(new DescriptionRowFilter(descriptionStart));
         });
     }
 }

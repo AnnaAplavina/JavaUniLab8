@@ -21,7 +21,6 @@ public class MusicBandConnection implements Closeable {
                 try {
                     MusicBandResponse response = getResponse();
                     if(response.status != ResponseStatus.SUCCESS && response.status != ResponseStatus.FAIL){
-                        System.out.println("UPDATE");
                         if(updater != null){
                             updater.update(response);
                         }

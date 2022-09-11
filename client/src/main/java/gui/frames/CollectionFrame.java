@@ -2,6 +2,8 @@ package gui.frames;
 
 import collectionitems.MusicBand;
 import connection.MusicBandConnection;
+import connection.MusicBandResponse;
+import connection.ResponseStatus;
 import console.input.EndOfInputException;
 import console.util.scriptexecution.ReadingScriptFileException;
 import console.util.scriptexecution.ScriptExecutor;
@@ -264,12 +266,40 @@ public class CollectionFrame extends JFrame {
         deleteButton.addActionListener(e -> {
             int row = collectionTable.getSelectedRow();
             int id = (int) tableModel.getValueAt(row, 0);
-            for (int i = 0; i < bands.size(); i++){
-                if(bands.get(i).getId() == id){
-                    bands.remove(i);
-                    break;
-                }
+            try {
+                connection.sendCommand("remove_by_id", "" + id);
+            } catch (IOException | ClassNotFoundException ex) {
+                JOptionPane.showMessageDialog(null, "NoConnection");
+                System.exit(0);
             }
         });
+        connection.setUpdater(this::update);
+    }
+
+    private void update(MusicBandResponse updateResponse){
+        if(updateResponse.status == ResponseStatus.UPDATE_DELETE){
+            for (int id: updateResponse.ids){
+                bands.removeIf(b -> b.getId() == id);
+            }
+        }
+        if(updateResponse.status == ResponseStatus.UPDATE_CLEAR){
+            String username = updateResponse.response;
+            bands.removeIf(b -> b.getOwnerUsername().equals(username));
+        }
+        if(updateResponse.status == ResponseStatus.UPDATE_ADD){
+            for (MusicBand band: updateResponse.musicBandList){
+                bands.add(band);
+            }
+        }
+        if(updateResponse.status == ResponseStatus.UPDATE_UPDATE){
+            for(MusicBand band: updateResponse.musicBandList){
+                bands.stream().forEach(b -> {
+                    if(b.getId() == band.getId()){
+                        b = band;
+                    }
+                });
+            }
+        }
+        tableModel.fireTableDataChanged();
     }
 }

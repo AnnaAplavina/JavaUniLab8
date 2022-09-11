@@ -90,7 +90,6 @@ public class MusicBandServer {
                                         if(updateResponse != null){
                                             for(SelectionKey key: selector.keys()){
                                                 if(key.channel() != ssc){
-                                                    System.out.println("SENDING UPDATE");
                                                     ResponseSender.sendResponse(updateResponse, (SocketChannel) key.channel());
                                                 }
                                             }
@@ -102,7 +101,6 @@ public class MusicBandServer {
                                 catch (InterruptedException ex) {
                                     logger.info(ex.getMessage());
                                 } catch (ExecutionException|IOException ex){
-                                    ex.printStackTrace();
                                     logger.info("Client disconnected " + k.channel());
                                     k.cancel();
                                 }

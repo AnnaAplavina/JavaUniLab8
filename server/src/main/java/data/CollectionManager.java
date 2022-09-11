@@ -82,6 +82,7 @@ public class CollectionManager {
         readWriteLock.writeLock().lock();
         try{
             band.setId(musicBandDao.addBandToDb(band, username));
+            band.setOwnerUsername(username);
             collection.add(band);
         } finally {
             readWriteLock.writeLock().unlock();
@@ -101,6 +102,7 @@ public class CollectionManager {
                 throw new ArrayIndexOutOfBoundsException();
             }
             band.setId(musicBandDao.addBandToDb(band, username));
+            band.setOwnerUsername(username);
             collection.add(index, band);
         } finally {
             readWriteLock.writeLock().unlock();

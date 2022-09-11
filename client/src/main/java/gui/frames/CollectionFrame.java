@@ -211,7 +211,8 @@ public class CollectionFrame extends JFrame {
 
         //functionality
         this.connection = connection;
-        tableModel = new MusicBandTableModel(connection.sendCommand("load").musicBandList);
+        bands = connection.sendCommand("load").musicBandList;
+        tableModel = new MusicBandTableModel(bands);
         collectionTable = new JTable(tableModel);
         TableRowSorter tableRowSorter = new TableRowSorter(tableModel);
         collectionTable.setRowSorter(tableRowSorter);
@@ -259,6 +260,16 @@ public class CollectionFrame extends JFrame {
         filterDescriptionButton.addActionListener(e -> {
             String descriptionStart = JOptionPane.showInputDialog(this, "DescriptionStarts");
             tableRowSorter.setRowFilter(new DescriptionRowFilter(descriptionStart));
+        });
+        deleteButton.addActionListener(e -> {
+            int row = collectionTable.getSelectedRow();
+            int id = (int) tableModel.getValueAt(row, 0);
+            for (int i = 0; i < bands.size(); i++){
+                if(bands.get(i).getId() == id){
+                    bands.remove(i);
+                    break;
+                }
+            }
         });
     }
 }

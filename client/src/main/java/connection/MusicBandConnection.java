@@ -9,9 +9,36 @@ public class MusicBandConnection implements Closeable {
     private Socket socket;
     private String username;
     private String password;
+    private volatile MusicBandResponse response;
+    private volatile Updater updater;
 
     public MusicBandConnection(String ip, int port) throws IOException {
         socket = new Socket(ip, port);
+        response = null;
+        updater = null;
+        Thread readResponseThread = new Thread(() -> {
+            while (true){
+                try {
+                    MusicBandResponse response = getResponse();
+                    if(response.status != ResponseStatus.SUCCESS && response.status != ResponseStatus.FAIL){
+                        if(updater != null){
+                            updater.update(response);
+                        }
+                    }
+                    else {
+                        this.response = response;
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        readResponseThread.setDaemon(true);
+        readResponseThread.start();
+    }
+
+    public void setUpdater(Updater updater){
+        this.updater = updater;
     }
 
     public void setUsername(String username){
@@ -28,7 +55,11 @@ public class MusicBandConnection implements Closeable {
         musicBandRequest.password = password;
         musicBandRequest.name = command;
         sendToServer(musicBandRequest);
-        return getResponse();
+        while (true){
+            if(response != null){
+                return response;
+            }
+        }
     }
 
     public MusicBandResponse sendCommand(String command, String arg) throws IOException, ClassNotFoundException {
@@ -38,7 +69,11 @@ public class MusicBandConnection implements Closeable {
         musicBandRequest.name = command;
         musicBandRequest.arg = arg;
         sendToServer(musicBandRequest);
-        return getResponse();
+        while (true){
+            if(response != null){
+                return response;
+            }
+        }
     }
 
     public MusicBandResponse sendCommand(String command, String arg, MusicBand band) throws IOException, ClassNotFoundException {
@@ -49,7 +84,11 @@ public class MusicBandConnection implements Closeable {
         musicBandRequest.arg = arg;
         musicBandRequest.band = band;
         sendToServer(musicBandRequest);
-        return getResponse();
+        while (true){
+            if(response != null){
+                return response;
+            }
+        }
     }
 
     @Override

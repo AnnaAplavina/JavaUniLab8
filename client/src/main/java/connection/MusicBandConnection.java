@@ -57,7 +57,9 @@ public class MusicBandConnection implements Closeable {
         sendToServer(musicBandRequest);
         while (true){
             if(response != null){
-                return response;
+                MusicBandResponse recieved = response;
+                response = null;
+                return recieved;
             }
         }
     }
@@ -71,7 +73,9 @@ public class MusicBandConnection implements Closeable {
         sendToServer(musicBandRequest);
         while (true){
             if(response != null){
-                return response;
+                MusicBandResponse recieved = response;
+                response = null;
+                return recieved;
             }
         }
     }
@@ -86,7 +90,9 @@ public class MusicBandConnection implements Closeable {
         sendToServer(musicBandRequest);
         while (true){
             if(response != null){
-                return response;
+                MusicBandResponse recieved = response;
+                response = null;
+                return recieved;
             }
         }
     }

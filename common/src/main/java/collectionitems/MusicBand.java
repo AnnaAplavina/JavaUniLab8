@@ -175,14 +175,14 @@ public class MusicBand implements Serializable, Comparable<MusicBand> {
         if(description == null && otherBand.getDescription() == null){
             equalDescription = true;
         }
-        else if(description.equals(otherBand.getDescription())){
+        else if(description != null && description.equals(otherBand.getDescription())){
             equalDescription = true;
         }
         boolean equalGenre = false;
         if(genre == null && otherBand.getGenre() == null){
             equalGenre = true;
         }
-        else if(genre.equals(otherBand.getGenre())){
+        else if(genre != null && genre.equals(otherBand.getGenre())){
             equalGenre = true;
         }
         boolean equalBestAlbum = false;

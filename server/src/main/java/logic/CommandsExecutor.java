@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.AbstractMap;
 import java.util.List;
 
 public class CommandsExecutor {
@@ -29,7 +30,8 @@ public class CommandsExecutor {
         this.userList = userDao.getAllUsers();
     }
 
-    public MusicBandResponse executeCommand(MusicBandRequest command) throws IOException, NoSuchAlgorithmException, QueryExecutionException {
+    public AbstractMap.SimpleEntry<MusicBandResponse, MusicBandResponse> executeCommand(MusicBandRequest command)
+            throws IOException, NoSuchAlgorithmException, QueryExecutionException {
         MusicBandResponse response = new MusicBandResponse();
         if(command.name.equals("register")){
             if(userList.stream().filter(u -> u.getUsername().equals(command.username)).findAny().orElse(null) == null){
@@ -38,39 +40,43 @@ public class CommandsExecutor {
                 userList.add(user);
                 response.status = ResponseStatus.SUCCESS;
                 response.response = "New user successfully registered!";
-                return response;
+                return new AbstractMap.SimpleEntry<>(response, null);
             }
             else {
                 response.status = ResponseStatus.FAIL;
                 response.response = "This username is already used!";
-                return response;
+                return new AbstractMap.SimpleEntry<>(response, null);
             }
         }
         if(!checkUser(command.username, command.password)){
             response.status = ResponseStatus.FAIL;
             response.response = "Authorization failed";
-            return response;
+            return new AbstractMap.SimpleEntry<>(response, null);
         }
         if(command.name.equals("login")){
             response.status = ResponseStatus.SUCCESS;
             response.response = "Authorization successful";
-            return response;
+            return new AbstractMap.SimpleEntry<>(response, null);
         }
         if(command.name.equals("load")){
             response.status = ResponseStatus.SUCCESS;
             response.musicBandList = collectionManager.getAll();
-            return response;
+            return new AbstractMap.SimpleEntry<>(response, null);
         }
         Command executableCommand = getCommandObject(command, command.username);
         try {
             String executionResult = executableCommand.execute();
             response.status = ResponseStatus.SUCCESS;
             response.response = executionResult;
-            return response;
+            if(executableCommand instanceof ChangingCollectionCommand){
+                MusicBandResponse updateResponse = ((ChangingCollectionCommand)executableCommand).getUpdateResponse();
+                return new AbstractMap.SimpleEntry<>(response, updateResponse);
+            }
+            return new AbstractMap.SimpleEntry<>(response, null);
         } catch (WrongArgumentException e) {
             response.status = ResponseStatus.FAIL;
             response.response = e.getMessage();
-            return response;
+            return new AbstractMap.SimpleEntry<>(response, null);
         }
     }
 

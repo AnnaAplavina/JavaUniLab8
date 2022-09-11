@@ -153,7 +153,7 @@ public class MusicBandDao {
 
     public void removeBandById(int id) throws QueryExecutionException {
         try {
-            statement.executeQuery("DELETE FROM " + tableName + " WHERE id=" + id);
+            statement.executeUpdate("DELETE FROM " + tableName + " WHERE id=" + id);
         } catch (SQLException ex) {
             logger.info("Could not remove band from db\n" + ex.getMessage());
             throw new QueryExecutionException("Could not remove band from db\n" + ex.getMessage());

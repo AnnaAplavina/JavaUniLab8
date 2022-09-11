@@ -9,4 +9,5 @@ public class MusicBandResponse implements Serializable {
     public ResponseStatus status = null;
     public String response = null;
     public List<MusicBand> musicBandList = null;
+    public List<Integer> ids = null;
 }

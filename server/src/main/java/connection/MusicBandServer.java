@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.channels.*;
 import java.security.NoSuchAlgorithmException;
+import java.util.AbstractMap;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -65,7 +66,7 @@ public class MusicBandServer {
                                             throw new IOException(ex.getMessage());
                                         }
                                     });
-                            Future<MusicBandResponse> responseFuture = fixedThreadPool.submit(()-> {
+                            Future<AbstractMap.SimpleEntry<MusicBandResponse, MusicBandResponse>> responseFuture = fixedThreadPool.submit(()-> {
                                 try {
                                     MusicBandRequest request = commandFuture.get();
                                     return commandsExecutor.executeCommand(request);
@@ -75,7 +76,7 @@ public class MusicBandServer {
                                     MusicBandResponse response = new MusicBandResponse();
                                     response.status = ResponseStatus.FAIL;
                                     response.response = "Error on server";
-                                    return response;
+                                    return new AbstractMap.SimpleEntry<>(response, null);
                                 }
                                 catch (ExecutionException ex){
                                     throw new IOException(ex.getMessage());
@@ -83,16 +84,25 @@ public class MusicBandServer {
                             });
                             fixedThreadPool.submit(()->{
                                 try{
-                                    MusicBandResponse response = responseFuture.get();
+                                    MusicBandResponse response = responseFuture.get().getKey();
+                                    MusicBandResponse updateResponse = responseFuture.get().getValue();
                                     if(response != null){
+                                        if(updateResponse != null){
+                                            for(SelectionKey key: selector.keys()){
+                                                if(key.channel() != ssc){
+                                                    System.out.println("SENDING UPDATE");
+                                                    ResponseSender.sendResponse(updateResponse, (SocketChannel) key.channel());
+                                                }
+                                            }
+                                        }
                                         ResponseSender.sendResponse(response, (SocketChannel) k.channel());
                                         selectedKeys.remove();
                                     }
-
                                 }
                                 catch (InterruptedException ex) {
                                     logger.info(ex.getMessage());
                                 } catch (ExecutionException|IOException ex){
+                                    ex.printStackTrace();
                                     logger.info("Client disconnected " + k.channel());
                                     k.cancel();
                                 }

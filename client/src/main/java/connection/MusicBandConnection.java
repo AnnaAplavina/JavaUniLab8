@@ -21,6 +21,7 @@ public class MusicBandConnection implements Closeable {
                 try {
                     MusicBandResponse response = getResponse();
                     if(response.status != ResponseStatus.SUCCESS && response.status != ResponseStatus.FAIL){
+                        System.out.println("UPDATE");
                         if(updater != null){
                             updater.update(response);
                         }
@@ -57,9 +58,9 @@ public class MusicBandConnection implements Closeable {
         sendToServer(musicBandRequest);
         while (true){
             if(response != null){
-                MusicBandResponse recieved = response;
+                MusicBandResponse received = response;
                 response = null;
-                return recieved;
+                return received;
             }
         }
     }
@@ -73,9 +74,9 @@ public class MusicBandConnection implements Closeable {
         sendToServer(musicBandRequest);
         while (true){
             if(response != null){
-                MusicBandResponse recieved = response;
+                MusicBandResponse received = response;
                 response = null;
-                return recieved;
+                return received;
             }
         }
     }
@@ -90,9 +91,9 @@ public class MusicBandConnection implements Closeable {
         sendToServer(musicBandRequest);
         while (true){
             if(response != null){
-                MusicBandResponse recieved = response;
+                MusicBandResponse received = response;
                 response = null;
-                return recieved;
+                return received;
             }
         }
     }

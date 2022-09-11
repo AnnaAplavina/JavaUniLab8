@@ -2,18 +2,22 @@ package logic.commands;
 
 import collectionitems.MusicBand;
 import collectionitems.WrongArgumentException;
+import connection.MusicBandResponse;
+import connection.ResponseStatus;
 import data.CollectionManager;
 import data.database.QueryExecutionException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * This command inserting a new band if it is greater than any other band in collection
  */
-public class InsertIfMaxCommand implements Command{
+public class InsertIfMaxCommand implements Command, ChangingCollectionCommand{
     private CollectionManager manager;
     private MusicBand band;
     private String username;
+    private UpdateStatus updateStatus = UpdateStatus.NOT_EXECUTED;
 
     public InsertIfMaxCommand(CollectionManager manager, MusicBand band, String username){
         this.manager = manager;
@@ -25,15 +29,34 @@ public class InsertIfMaxCommand implements Command{
     @Override
     public String execute() throws IOException, WrongArgumentException{
         if(band == null){
+            updateStatus = UpdateStatus.NOT_UPDATED;
             throw new WrongArgumentException("Band can not be null");
         }
         try {
             if(manager.addIfMax(band, username)){
-                    return "Added new max element";
-                }
+                updateStatus = UpdateStatus.UPDATED;
+                return "Added new max element";
+            }
         } catch (QueryExecutionException e) {
+            updateStatus = UpdateStatus.NOT_UPDATED;
             throw new WrongArgumentException("Error when working with db!");
         }
+        updateStatus = UpdateStatus.NOT_UPDATED;
         return "Provided element is not max element";
+    }
+
+    @Override
+    public MusicBandResponse getUpdateResponse() {
+        if(updateStatus == UpdateStatus.NOT_EXECUTED){
+            throw new GetUpdateBeforeExecutionException();
+        }
+        if(updateStatus == UpdateStatus.NOT_UPDATED){
+            return null;
+        }
+        MusicBandResponse updateResponse = new MusicBandResponse();
+        updateResponse.status = ResponseStatus.UPDATE_ADD;
+        updateResponse.musicBandList = new ArrayList<>();
+        updateResponse.musicBandList.add(band);
+        return updateResponse;
     }
 }

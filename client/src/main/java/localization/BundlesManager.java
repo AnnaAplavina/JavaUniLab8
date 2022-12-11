@@ -19,7 +19,7 @@ public class BundlesManager {
 
     public BundlesManager() throws IOException {
         english = ResourceBundle.getBundle("langs", new Locale("en", "IE"));
-        russian = ResourceBundle.getBundle("langs", new Locale("ru"));
+        russian = ResourceBundle.getBundle("langs", new Locale("ru", "RU"));
         lithuanian = ResourceBundle.getBundle("langs", new Locale("lt", "LT"));
         norwegian = ResourceBundle.getBundle("langs", new Locale("no", "NO"));
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("prop.properties");

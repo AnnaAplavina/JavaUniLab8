@@ -14,10 +14,10 @@ public class ServerMain {
     public static void main(String[] args) {
         try {
             System.out.println(LocalDateTime.now());
-            MusicBandDao musicBandDao = new MusicBandDao("jdbc:postgresql://localhost:5432/studs",
-                    "s264432", "ajf870", "music_bands_table");
-            UserDao userDao = new UserDao("jdbc:postgresql://localhost:5432/studs",
-                    "s264432", "ajf870", "users_table");
+            MusicBandDao musicBandDao = new MusicBandDao("jdbc:postgresql://localhost:5432/mydb",
+                    "music_band_server", "1234", "music_bands_table");
+            UserDao userDao = new UserDao("jdbc:postgresql://localhost:5432/mydb",
+                    "music_band_server", "1234", "music_band_users_table");
             CollectionManager collectionManager = new CollectionManager(musicBandDao);
             CommandsExecutor executor = new CommandsExecutor(collectionManager, userDao);
             MusicBandServer server = new MusicBandServer(4321, executor);

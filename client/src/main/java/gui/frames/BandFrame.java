@@ -1,9 +1,14 @@
 package gui.frames;
 
+import collectionitems.*;
+import connection.MusicBandConnection;
+import connection.MusicBandResponse;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class BandFrame extends JFrame implements ActionListener {
     private Container container;
@@ -21,15 +26,30 @@ public class BandFrame extends JFrame implements ActionListener {
     private JTextArea descriptionTextArea;
     private JLabel genreLabel;
     private JComboBox genreComboBox;
-    private JLabel bestAlbumLabel;
-    private JTextField bestAlbumTextField;
+    private JCheckBox noAlbumCheckBox;
+    private JLabel albumNameLabel;
+    private JTextField albumNameTextField;
+    private JLabel albumTracksLabel;
+    private JTextField albumTracksTextField;
+
+    private JLabel albumLengthLabel;
+
+    private JTextField albumLengthTextField;
+
+    private JLabel albumSalesLabel;
+    private JTextField albumSalesTextField;
 
     private JButton submitButton;
+
+    private MusicBand band = new MusicBand();
     private String[] genres = {"-", "soul", "blues", "punk rock", "post punk", "brit pop"};
 
-    public BandFrame(String title){
+    private final MusicBandConnection connection;
+
+    public BandFrame(String title, MusicBandConnection connection){
+        this.connection = connection;
         setTitle(title);
-        setBounds(300, 90, 400, 400);
+        setBounds(300, 90, 400, 600);
         setResizable(false);
 
         container = getContentPane();
@@ -106,24 +126,182 @@ public class BandFrame extends JFrame implements ActionListener {
         genreComboBox.setLocation(120, 255);
         container.add(genreComboBox);
 
-        bestAlbumLabel = new JLabel("Best Album");
-        bestAlbumLabel.setSize(100, 20);
-        bestAlbumLabel.setLocation(10, 285);
-        container.add(bestAlbumLabel);
+        noAlbumCheckBox = new JCheckBox("No Best Album");
+        noAlbumCheckBox.setSize(250, 20);
+        noAlbumCheckBox.setLocation(10, 285);
+        noAlbumCheckBox.addActionListener(e -> {
+            if(noAlbumCheckBox.isSelected()){
+                albumNameTextField.setEnabled(false);
+                albumTracksTextField.setEnabled(false);
+                albumLengthTextField.setEnabled(false);
+                albumSalesTextField.setEnabled(false);
+            }
+            else {
+                albumNameTextField.setEnabled(true);
+                albumTracksTextField.setEnabled(true);
+                albumLengthTextField.setEnabled(true);
+                albumSalesTextField.setEnabled(true);
+            }
+        });
+        container.add(noAlbumCheckBox);
 
-        bestAlbumTextField = new JTextField();
-        bestAlbumTextField.setSize(190, 20);
-        bestAlbumTextField.setLocation(120, 285);
-        container.add(bestAlbumTextField);
+        albumNameLabel = new JLabel("Best Album Name");
+        albumNameLabel.setSize(150, 20);
+        albumNameLabel.setLocation(10, 315);
+        container.add(albumNameLabel);
+
+        albumNameTextField = new JTextField();
+        albumNameTextField.setSize(190, 20);
+        albumNameTextField.setLocation(150, 315);
+        container.add(albumNameTextField);
+
+        albumTracksLabel = new JLabel("Best Album Tracks");
+        albumTracksLabel.setSize(150, 20);
+        albumTracksLabel.setLocation(10, 345);
+        container.add(albumTracksLabel);
+
+        albumTracksTextField = new JTextField();
+        albumTracksTextField.setSize(190, 20);
+        albumTracksTextField.setLocation(150, 345);
+        container.add(albumTracksTextField);
+
+        albumLengthLabel = new JLabel("Best Album Length");
+        albumLengthLabel.setSize(150, 20);
+        albumLengthLabel.setLocation(10, 375);
+        container.add(albumLengthLabel);
+
+        albumLengthTextField = new JTextField();
+        albumLengthTextField.setSize(190, 20);
+        albumLengthTextField.setLocation(150, 375);
+        container.add(albumLengthTextField);
+
+        albumSalesLabel = new JLabel("Best Album Sales");
+        albumSalesLabel.setSize(150, 20);
+        albumSalesLabel.setLocation(10, 405);
+        container.add(albumSalesLabel);
+
+        albumSalesTextField = new JTextField();
+        albumSalesTextField.setSize(190, 20);
+        albumSalesTextField.setLocation(150, 405);
+        container.add(albumSalesTextField);
 
         submitButton = new JButton("Submit");
         submitButton.setSize(100, 20);
-        submitButton.setLocation(80, 315);
+        submitButton.setLocation(80, 435);
+        submitButton.addActionListener(this);
         container.add(submitButton);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        boolean isCorrect = true;
+        try{
+            band.setName(nameTextField.getText());
+        }
+        catch (WrongArgumentException ex){
+            JOptionPane.showMessageDialog(null, "Band name can not be empty");
+            isCorrect = false;
+        }
+        if(xCoordinateTextField.getText().equals("") || yCoordinateTextField.getText().equals("")){
+            JOptionPane.showMessageDialog(null, "Empty coordinates");
+            isCorrect = false;
+        }
+        Coordinates coordinates = new Coordinates();
+        try{
+            float x = Float.parseFloat(xCoordinateTextField.getText());
+            coordinates.setX(x);
+            float y = Float.parseFloat(yCoordinateTextField.getText());
+            coordinates.setY(y);
+        }
+        catch (WrongArgumentException|NumberFormatException exception){
+            JOptionPane.showMessageDialog(null, "Incorrect coordinates");
+            isCorrect = false;
+        }
+        try{
+            band.setNumberOfParticipants(Integer.parseInt(participantsTextField.getText()));
+        }
+        catch (WrongArgumentException ex){
+            JOptionPane.showMessageDialog(null, "Number of participants must be greater than 0");
+            isCorrect = false;
+        }
+        catch (NumberFormatException ex){
+            JOptionPane.showMessageDialog(null, "Number of participants must be a number");
+            isCorrect = false;
+        }
+        try{
+            band.setAlbumsCount(Integer.parseInt(albumsCountTextField.getText()));
+        }
+        catch (WrongArgumentException ex){
+            JOptionPane.showMessageDialog(null, "Albums count must be greater than 0");
+            isCorrect = false;
+        }
+        catch (NumberFormatException ex){
+            JOptionPane.showMessageDialog(null, "Albums count must be a number");
+            isCorrect = false;
+        }
+        band.setDescription(descriptionTextArea.getText());
+        String genre = (String)genreComboBox.getSelectedItem();
+        switch (genre){
+            case "soul": band.setGenre(MusicGenre.SOUL); break;
+            case "blues": band.setGenre(MusicGenre.BLUES); break;
+            case "punk rock": band.setGenre(MusicGenre.PUNK_ROCK); break;
+            case "post punk": band.setGenre(MusicGenre.POST_PUNK); break;
+            case "brit pop": band.setGenre(MusicGenre.BRIT_POP); break;
+            case "-": band.setGenre(null); break;
+        }
+        if(!noAlbumCheckBox.isSelected()){
+            Album album = new Album();
+            try {
+                album.setName(albumNameTextField.getText());
+            }
+            catch (WrongArgumentException ex){
+                JOptionPane.showMessageDialog(null, "Best album name can not be empty");
+                isCorrect = false;
+            }
+            try {
+                album.setLength(Integer.parseInt(albumLengthTextField.getText()));
+            }
+            catch (NumberFormatException ex){
+                JOptionPane.showMessageDialog(null, "Best album length must be a number");
+                isCorrect = false;
+            }
+            catch (WrongArgumentException ex){
+                JOptionPane.showMessageDialog(null, "Best album length must be greater than 0 and can not be empty");
+                isCorrect = false;
+            }
+            try {
+                album.setTracks(Long.parseLong(albumTracksTextField.getText()));
+            }
+            catch (WrongArgumentException ex){
+                JOptionPane.showMessageDialog(null, "Best album tracks must be greater than 0");
+                isCorrect = false;
+            }
+            catch (NumberFormatException ex){
+                JOptionPane.showMessageDialog(null, "Best album tracks must be a number");
+                isCorrect = false;
+            }
+            try {
+                album.setSales(Float.parseFloat(albumSalesTextField.getText()));
+                band.setBestAlbum(album);
+            }
+            catch (NumberFormatException ex){
+                JOptionPane.showMessageDialog(null, "Best album sales must be a number");
+                isCorrect = false;
+            }
+            catch (WrongArgumentException ex) {
+                JOptionPane.showMessageDialog(null, "Best album sales must be greater than 0 and can not be empty");
+                isCorrect = false;
+            }
+        }
+        if(isCorrect){
+            try {
+                MusicBandResponse response = connection.sendCommand("add", null, band);
+                System.out.println(response.response);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            } catch (ClassNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 }

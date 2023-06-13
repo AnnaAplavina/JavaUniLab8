@@ -274,7 +274,7 @@ public class CollectionFrame extends JFrame {
             }
         });
         addButton.addActionListener(e -> {
-            new BandFrame("Add New Band").setVisible(true);
+            new BandFrame("Add New Band", connection).setVisible(true);
         });
         connection.setUpdater(this::update);
     }

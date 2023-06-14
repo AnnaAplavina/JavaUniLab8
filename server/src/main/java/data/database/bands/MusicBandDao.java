@@ -161,10 +161,10 @@ public class MusicBandDao {
     }
 
     public void changeBandById(int id, MusicBand band) throws QueryExecutionException {
-        String query = "UPDATE TABLE " + tableName + " SET " +
+        String query = "UPDATE " + tableName + " SET " +
                 "name=?,x=?,y=?,creation_date=?,number_of_participants=?,albums_count=?,description=?," +
                 "genre=?,best_album_name=?,best_album_tracks=?,best_album_length=?,best_album_sales=?" +
-                "WHERE id=?";
+                " WHERE id=?";
         try{
             PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, band.getName());

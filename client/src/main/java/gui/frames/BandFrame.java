@@ -3,6 +3,7 @@ package gui.frames;
 import collectionitems.*;
 import connection.MusicBandConnection;
 import connection.MusicBandResponse;
+import connection.ResponseStatus;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,7 +47,10 @@ public class BandFrame extends JFrame implements ActionListener {
 
     private final MusicBandConnection connection;
 
-    public BandFrame(String title, MusicBandConnection connection){
+    private final BandFormType type;
+
+    public BandFrame(String title, MusicBandConnection connection, BandFormType type){
+        this.type = type;
         this.connection = connection;
         setTitle(title);
         setBounds(300, 90, 400, 600);
@@ -260,14 +264,16 @@ public class BandFrame extends JFrame implements ActionListener {
                 isCorrect = false;
             }
             try {
-                album.setLength(Integer.parseInt(albumLengthTextField.getText()));
+                if(!albumLengthTextField.getText().isEmpty()){
+                    album.setLength(Integer.parseInt(albumLengthTextField.getText()));
+                }
             }
             catch (NumberFormatException ex){
                 JOptionPane.showMessageDialog(null, "Best album length must be a number");
                 isCorrect = false;
             }
             catch (WrongArgumentException ex){
-                JOptionPane.showMessageDialog(null, "Best album length must be greater than 0 and can not be empty");
+                JOptionPane.showMessageDialog(null, "Best album length must be greater than 0");
                 isCorrect = false;
             }
             try {
@@ -296,13 +302,57 @@ public class BandFrame extends JFrame implements ActionListener {
         }
         if(isCorrect){
             try {
-                MusicBandResponse response = connection.sendCommand("add", null, band);
-                System.out.println(response.response);
+                MusicBandResponse response = null;
+                switch (type){
+                    case ADD: response = connection.sendCommand("add", null, band); break;
+                    case EDIT: response = connection.sendCommand("update", "" + band.getId(), band);break;
+                }
+                assert response != null;
+                if (response.status == ResponseStatus.FAIL){
+                    JOptionPane.showMessageDialog(null, "Answer from the server: execution failed");
+                    System.out.println(band.getId());
+                    System.out.println(response.response);
+                }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             } catch (ClassNotFoundException ex) {
                 throw new RuntimeException(ex);
             }
+        }
+    }
+
+    public void setBandValues(MusicBand band){
+        this.band.setId(band.getId());
+        nameTextField.setText(band.getName());
+        xCoordinateTextField.setText(band.getCoordinates().getX().toString());
+        yCoordinateTextField.setText("" + band.getCoordinates().getY());
+        participantsTextField.setText("" + band.getNumberOfParticipants());
+        albumsCountTextField.setText("" + band.getAlbumsCount());
+        if(band.getDescription() != null){
+            descriptionTextArea.setText(band.getDescription());
+        }
+        switch (band.getGenre()){
+            case SOUL: genreComboBox.setSelectedItem(genres[1]); break;
+            case BLUES: genreComboBox.setSelectedItem(genres[2]); break;
+            case PUNK_ROCK: genreComboBox.setSelectedItem(genres[3]); break;
+            case POST_PUNK: genreComboBox.setSelectedItem(genres[4]); break;
+            case BRIT_POP: genreComboBox.setSelectedItem(genres[5]); break;
+            default: genreComboBox.setSelectedItem(genres[0]);
+        }
+        if(band.getBestAlbum() != null){
+            albumNameTextField.setText(band.getBestAlbum().getName());
+            albumTracksTextField.setText("" + band.getBestAlbum().getTracks());
+            if(band.getBestAlbum().getLength() != null){
+                albumLengthTextField.setText("" + band.getBestAlbum().getLength());
+            }
+            albumSalesTextField.setText("" + band.getBestAlbum().getSales());
+        }
+        else {
+            noAlbumCheckBox.setSelected(true);
+            albumNameTextField.setEnabled(false);
+            albumTracksTextField.setEnabled(false);
+            albumLengthTextField.setEnabled(false);
+            albumSalesTextField.setEnabled(false);
         }
     }
 }

@@ -1,6 +1,7 @@
 package gui.frames;
 
 import collectionitems.MusicBand;
+import collectionitems.WrongArgumentException;
 import connection.MusicBandConnection;
 import connection.MusicBandResponse;
 import connection.ResponseStatus;
@@ -273,10 +274,22 @@ public class CollectionFrame extends JFrame {
                 System.exit(0);
             }
         });
-        addButton.addActionListener(e -> {
-            new BandFrame("Add New Band", connection).setVisible(true);
-        });
+
         connection.setUpdater(this::update);
+
+        addButton.addActionListener(e -> new BandFrame("Add New Band", connection, BandFormType.ADD).setVisible(true));
+        editButton.addActionListener(e -> {
+            if(collectionTable.getSelectedRow() == -1){
+                JOptionPane.showMessageDialog(null, "Select band");
+            }
+            else {
+                int selectedId = (Integer) collectionTable.getValueAt(collectionTable.getSelectedRow(), 0);
+                MusicBand selectedBand = bands.stream().filter(b -> b.getId() == selectedId).findFirst().get();
+                BandFrame frame = new BandFrame("Edit Selected Band", connection, BandFormType.EDIT);
+                frame.setBandValues(selectedBand);
+                frame.setVisible(true);
+            }
+        });
     }
 
     private void update(MusicBandResponse updateResponse){
@@ -295,12 +308,23 @@ public class CollectionFrame extends JFrame {
             }
         }
         if(updateResponse.status == ResponseStatus.UPDATE_UPDATE){
-            for(MusicBand band: updateResponse.musicBandList){
-                bands.stream().forEach(b -> {
-                    if(b.getId() == band.getId()){
-                        b = band;
+            MusicBand updated = updateResponse.musicBandList.get(0);
+            for(MusicBand b: bands){
+                if(b.getId() == updated.getId()){
+                    try {
+                        b.setName(updated.getName());
+                        b.setCoordinates(updated.getCoordinates());
+                        b.setCreationDate(updated.getCreationDate());
+                        b.setNumberOfParticipants(updated.getNumberOfParticipants());
+                        b.setAlbumsCount(updated.getAlbumsCount());
+                        b.setDescription(updated.getDescription());
+                        b.setGenre(updated.getGenre());
+                        b.setBestAlbum(updated.getBestAlbum());
+                    } catch (WrongArgumentException e) {
+                        throw new RuntimeException(e);
                     }
-                });
+                    break;
+                }
             }
         }
         tableModel.fireTableDataChanged();

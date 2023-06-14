@@ -160,8 +160,9 @@ public class CollectionManager {
                 throw new WrongArgumentException("no element with such id");
             }
             musicBandDao.changeBandById(id, band);
-            collection.removeElement(band);
+            collection.removeElement(oldBand);
             band.setId(id);
+            band.setOwnerUsername(oldBand.getOwnerUsername());
             collection.add(band);
         } finally {
             readWriteLock.writeLock().unlock();
@@ -231,7 +232,7 @@ public class CollectionManager {
                     return true;
                 }
             } catch (EmptyCollectionException e) {
-                newBand.setId(musicBandDao.addBandToDb(newBand, username));;
+                newBand.setId(musicBandDao.addBandToDb(newBand, username));
                 collection.add(newBand);
                 return true;
             }

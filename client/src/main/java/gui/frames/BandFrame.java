@@ -212,6 +212,7 @@ public class BandFrame extends JFrame implements ActionListener {
             coordinates.setX(x);
             float y = Float.parseFloat(yCoordinateTextField.getText());
             coordinates.setY(y);
+            band.setCoordinates(coordinates);
         }
         catch (WrongArgumentException|NumberFormatException exception){
             JOptionPane.showMessageDialog(null, "Incorrect coordinates");

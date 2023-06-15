@@ -119,7 +119,7 @@ public class CommandsExecutor {
         if(commandName.equals("remove_by_id")){
             return new RemoveByIdCommand(collectionManager, arg, username);
         }
-        if(commandName.equals("clearUserBands")){
+        if(commandName.equals("clear")){
             return new ClearCommand(collectionManager, username);
         }
         if(commandName.equals("save")){

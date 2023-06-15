@@ -222,6 +222,7 @@ public class CollectionManager {
      */
     public boolean addIfMax(MusicBand newBand, String username) throws QueryExecutionException {
         readWriteLock.writeLock().lock();
+        newBand.setOwnerUsername(username);
         try{
             try {
                 MusicBand maxBand;
@@ -248,6 +249,7 @@ public class CollectionManager {
      */
     public boolean addIfMin(MusicBand newBand, String username) throws QueryExecutionException {
         readWriteLock.writeLock().lock();
+        newBand.setOwnerUsername(username);
         try{
             try {
                 MusicBand minBand;

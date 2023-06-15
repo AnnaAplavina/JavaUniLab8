@@ -203,12 +203,12 @@ public class MusicBandDao {
 
     public void clearUserBands(String username) throws QueryExecutionException {
         try{
-            String query = "DELETE FROM " + tableName + " WHERE owner=" + username;
+            String query = "DELETE FROM " + tableName + " WHERE owner=" + "\'" + username+ "\'";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.executeUpdate();
         }
         catch (SQLException ex){
-            logger.info("Could no add new music band to database\n" + ex.getMessage());
+            logger.info("Could not delete users bands\n" + ex.getMessage());
             throw new QueryExecutionException("Could not clearUserBands the table" + ex.getMessage());
         }
     }

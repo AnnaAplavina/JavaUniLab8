@@ -268,7 +268,10 @@ public class CollectionFrame extends JFrame {
             int row = collectionTable.getSelectedRow();
             int id = (int) tableModel.getValueAt(row, 0);
             try {
-                connection.sendCommand("remove_by_id", "" + id);
+                MusicBandResponse response = connection.sendCommand("remove_by_id", "" + id);
+                if(response.status == ResponseStatus.FAIL){
+                    JOptionPane.showMessageDialog(null, response.response);
+                }
             } catch (IOException | ClassNotFoundException ex) {
                 JOptionPane.showMessageDialog(null, "NoConnection");
                 System.exit(0);
@@ -290,6 +293,19 @@ public class CollectionFrame extends JFrame {
                 frame.setVisible(true);
             }
         });
+        insertAtButton.addActionListener(e -> new BandFrame("Add New Band", connection, BandFormType.INSERT_AT).setVisible(true));
+        addIfMaxButton.addActionListener(e ->  new BandFrame("Add New Band", connection, BandFormType.ADD_IF_MAX).setVisible(true));
+        addIfMinButton.addActionListener(e ->  new BandFrame("Add New Band", connection, BandFormType.ADD_IF_MIN).setVisible(true));
+        clearButton.addActionListener(e -> {
+            try {
+                connection.sendCommand("clear");
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(null, "ConnectionLost");
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
+            }
+        });
+        countLesserButton.addActionListener(e -> new CountLesserGenreFrame("Count Lesser Genre", connection).setVisible(true));
     }
 
     private void update(MusicBandResponse updateResponse){

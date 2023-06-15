@@ -40,6 +40,9 @@ public class BandFrame extends JFrame implements ActionListener {
     private JLabel albumSalesLabel;
     private JTextField albumSalesTextField;
 
+    private JLabel indexLabel;
+    private JTextField indexTextField;
+
     private JButton submitButton;
 
     private MusicBand band = new MusicBand();
@@ -189,11 +192,31 @@ public class BandFrame extends JFrame implements ActionListener {
         albumSalesTextField.setLocation(150, 405);
         container.add(albumSalesTextField);
 
-        submitButton = new JButton("Submit");
-        submitButton.setSize(100, 20);
-        submitButton.setLocation(80, 435);
-        submitButton.addActionListener(this);
-        container.add(submitButton);
+        if(type == BandFormType.INSERT_AT){
+            indexLabel = new JLabel("Index");
+            indexLabel.setSize(150, 20);
+            indexLabel.setLocation(10, 435);
+            container.add(indexLabel);
+
+            indexTextField = new JTextField();
+            indexTextField.setSize(190, 20);
+            indexTextField.setLocation(150, 435);
+            container.add(indexTextField);
+
+            submitButton = new JButton("Submit");
+            submitButton.setSize(100, 20);
+            submitButton.setLocation(80, 465);
+            submitButton.addActionListener(this);
+            container.add(submitButton);
+        }
+
+        else {
+            submitButton = new JButton("Submit");
+            submitButton.setSize(100, 20);
+            submitButton.setLocation(80, 435);
+            submitButton.addActionListener(this);
+            container.add(submitButton);
+        }
     }
 
     @Override
@@ -306,12 +329,20 @@ public class BandFrame extends JFrame implements ActionListener {
                 switch (type){
                     case ADD: response = connection.sendCommand("add", null, band); break;
                     case EDIT: response = connection.sendCommand("update", "" + band.getId(), band);break;
+                    case INSERT_AT:
+                        try{
+                            Integer.parseInt(indexTextField.getText());
+                            response = connection.sendCommand("insert_at", indexTextField.getText(), band);
+                        }
+                        catch (NumberFormatException ex){
+                            JOptionPane.showMessageDialog(null, "Index must be a number");
+                        }
+                    case ADD_IF_MAX: response = connection.sendCommand("insert_if_max", null, band); break;
+                    case ADD_IF_MIN: response = connection.sendCommand("insert_if_min", null, band); break;
                 }
                 assert response != null;
                 if (response.status == ResponseStatus.FAIL){
-                    JOptionPane.showMessageDialog(null, "Answer from the server: execution failed");
-                    System.out.println(band.getId());
-                    System.out.println(response.response);
+                    JOptionPane.showMessageDialog(null, "Execution failed. Answer from the server: " + response.response);
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);

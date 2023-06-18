@@ -362,13 +362,18 @@ public class BandFrame extends JFrame implements ActionListener {
         if(band.getDescription() != null){
             descriptionTextArea.setText(band.getDescription());
         }
-        switch (band.getGenre()){
-            case SOUL: genreComboBox.setSelectedItem(genres[1]); break;
-            case BLUES: genreComboBox.setSelectedItem(genres[2]); break;
-            case PUNK_ROCK: genreComboBox.setSelectedItem(genres[3]); break;
-            case POST_PUNK: genreComboBox.setSelectedItem(genres[4]); break;
-            case BRIT_POP: genreComboBox.setSelectedItem(genres[5]); break;
-            default: genreComboBox.setSelectedItem(genres[0]);
+        if(band.getGenre() == null){
+            genreComboBox.setSelectedItem(genres[0]);
+        }
+        else {
+            switch (band.getGenre()){
+                case SOUL: genreComboBox.setSelectedItem(genres[1]); break;
+                case BLUES: genreComboBox.setSelectedItem(genres[2]); break;
+                case PUNK_ROCK: genreComboBox.setSelectedItem(genres[3]); break;
+                case POST_PUNK: genreComboBox.setSelectedItem(genres[4]); break;
+                case BRIT_POP: genreComboBox.setSelectedItem(genres[5]); break;
+                default: genreComboBox.setSelectedItem(genres[0]);
+            }
         }
         if(band.getBestAlbum() != null){
             albumNameTextField.setText(band.getBestAlbum().getName());

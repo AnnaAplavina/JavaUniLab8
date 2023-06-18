@@ -11,6 +11,7 @@ import console.util.scriptexecution.ScriptExecutor;
 import gui.collectiontable.DescriptionRowFilter;
 import gui.collectiontable.MultiLineTableCellRenderer;
 import gui.collectiontable.MusicBandTableModel;
+import gui.components.MusicBandLabel;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
@@ -19,7 +20,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CollectionFrame extends JFrame {
     private JPanel mainPanel = new JPanel();
@@ -45,6 +48,8 @@ public class CollectionFrame extends JFrame {
 
     private final MusicBandConnection connection;
     private List<MusicBand> bands;
+
+    private List<MusicBandLabel> bandsLabels = new ArrayList<>();
     private MusicBandTableModel tableModel;
 
     public CollectionFrame(String username, MusicBandConnection connection) throws IOException, ClassNotFoundException, InterruptedException {
@@ -306,22 +311,63 @@ public class CollectionFrame extends JFrame {
             }
         });
         countLesserButton.addActionListener(e -> new CountLesserGenreFrame("Count Lesser Genre", connection).setVisible(true));
+
+        middlePanel.setLayout(null);
+        for(MusicBand b: bands){
+            System.out.println(middlePanel.getSize());
+            MusicBandLabel label = new MusicBandLabel(b);
+            label.setSize(100, 50);
+            label.setFont(new Font("Serif", Font.PLAIN, (int)b.getAlbumsCount()*2));
+            label.setLocation(590 + (int)b.getCoordinates().getX().floatValue(), (int)b.getCoordinates().getY());
+            middlePanel.add(label);
+            bandsLabels.add(label);
+        }
     }
 
     private void update(MusicBandResponse updateResponse){
         if(updateResponse.status == ResponseStatus.UPDATE_DELETE){
             for (int id: updateResponse.ids){
-                bands.removeIf(b -> b.getId() == id);
+                for(int i = 0; i < bands.size(); i++){
+                    if(bands.get(i).getId() == id){
+                        bands.remove(i);
+                        middlePanel.remove(bandsLabels.get(i));
+                        middlePanel.revalidate();
+                        middlePanel.repaint();
+                        bandsLabels.remove(i);
+                        break;
+                    }
+                }
             }
         }
         if(updateResponse.status == ResponseStatus.UPDATE_CLEAR){
             String username = updateResponse.response;
             bands.removeIf(b -> b.getOwnerUsername().equals(username));
+            bandsLabels.removeIf(l -> {
+                if(l.getOwnerUsername().equals(username)){
+                    middlePanel.remove(l);
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            });
+
+            middlePanel.revalidate();
+            middlePanel.repaint();
         }
         if(updateResponse.status == ResponseStatus.UPDATE_ADD){
             for (MusicBand band: updateResponse.musicBandList){
                 bands.add(band);
+                MusicBandLabel label = new MusicBandLabel(band);
+                label.setSize(100, 50);
+                label.setFont(new Font("Serif", Font.PLAIN, (int)band.getAlbumsCount()*2));
+                label.setLocation(590 + (int)band.getCoordinates().getX().floatValue(), (int)band.getCoordinates().getY());
+                middlePanel.add(label);
+                bandsLabels.add(label);
             }
+
+            middlePanel.revalidate();
+            middlePanel.repaint();
         }
         if(updateResponse.status == ResponseStatus.UPDATE_UPDATE){
             MusicBand updated = updateResponse.musicBandList.get(0);

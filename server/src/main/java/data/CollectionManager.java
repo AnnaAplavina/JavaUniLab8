@@ -176,6 +176,7 @@ public class CollectionManager {
         readWriteLock.writeLock().lock();
         try{
             musicBandDao.clearUserBands(username);
+            collection.clear();
             collection.addAll(musicBandDao.getBandsFromDb());
         } finally {
             readWriteLock.writeLock().unlock();

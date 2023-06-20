@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class CollectionFrame extends JFrame {
     private JPanel mainPanel = new JPanel();
@@ -31,7 +30,6 @@ public class CollectionFrame extends JFrame {
     private JPanel bottomPanel = new JPanel();
     private JPanel bottomMainPanel = new JPanel();
     private JButton helpButton = new JButton();
-    private JComboBox<String> languageComboBox = new JComboBox<>();
     private JLabel userLabel = new JLabel();
     private JTable collectionTable;
     private JButton executeScriptButton = new JButton();
@@ -100,12 +98,6 @@ public class CollectionFrame extends JFrame {
         topPanel.add(new JLabel(), headerConstraints);
         headerConstraints.gridx = 2;
         headerConstraints.gridy = 1;
-        languageComboBox.addItem("English(Ireland)");
-        languageComboBox.addItem("Русский");
-        languageComboBox.addItem("Lietuvių");
-        languageComboBox.addItem("Norsk");
-        topPanel.add(languageComboBox, headerConstraints);
-        languageComboBox.setPreferredSize(new Dimension(273, 30));
         headerConstraints.gridx = 2;
         headerConstraints.gridy = 2;
         topPanel.add(new JLabel(), headerConstraints);
@@ -236,7 +228,7 @@ public class CollectionFrame extends JFrame {
         tableScrollablePane.setPreferredSize(new Dimension(795, 180));
         bottomMainPanel.add(tableScrollablePane, bottomConstraints);
 
-        helpButton.addActionListener( e -> JOptionPane.showMessageDialog(null, "HelpText"));
+        helpButton.addActionListener( e -> JOptionPane.showMessageDialog(null, "Use this application to add, edit and delete MusicBand objects in the database"));
         infoButton.addActionListener( e -> {
             try {
                 JOptionPane.showMessageDialog(null, connection.sendCommand("info").response);
@@ -316,9 +308,6 @@ public class CollectionFrame extends JFrame {
         for(MusicBand b: bands){
             System.out.println(middlePanel.getSize());
             MusicBandLabel label = new MusicBandLabel(b);
-            label.setSize(100, 50);
-            label.setFont(new Font("Serif", Font.PLAIN, (int)b.getAlbumsCount()*2));
-            label.setLocation(590 + (int)b.getCoordinates().getX().floatValue(), (int)b.getCoordinates().getY());
             middlePanel.add(label);
             bandsLabels.add(label);
         }
@@ -359,13 +348,9 @@ public class CollectionFrame extends JFrame {
             for (MusicBand band: updateResponse.musicBandList){
                 bands.add(band);
                 MusicBandLabel label = new MusicBandLabel(band);
-                label.setSize(100, 50);
-                label.setFont(new Font("Serif", Font.PLAIN, (int)band.getAlbumsCount()*2));
-                label.setLocation(590 + (int)band.getCoordinates().getX().floatValue(), (int)band.getCoordinates().getY());
                 middlePanel.add(label);
                 bandsLabels.add(label);
             }
-
             middlePanel.revalidate();
             middlePanel.repaint();
         }
@@ -388,7 +373,19 @@ public class CollectionFrame extends JFrame {
                     break;
                 }
             }
+            bandsLabels.removeIf(l -> {
+                if(l.getId() == updated.getId()){
+                    middlePanel.remove(l);
+                    return true;
+                }
+                return false;
+            });
+            MusicBandLabel label = new MusicBandLabel(updated);
+            bandsLabels.add(label);
+            middlePanel.add(label);
         }
         tableModel.fireTableDataChanged();
+        middlePanel.revalidate();
+        middlePanel.repaint();
     }
 }

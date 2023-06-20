@@ -19,12 +19,9 @@ public class LoginFrame extends JFrame {
 
     //functionality
     private final MusicBandConnection connection;
-    private final BundlesManager bundlesManager;
 
 
     public LoginFrame(MusicBandConnection connection , BundlesManager bundlesManager){
-        this.bundlesManager = bundlesManager;
-
         //design
         JPanel northPanel = new JPanel();
         JPanel westPanel = new JPanel();
@@ -117,7 +114,7 @@ public class LoginFrame extends JFrame {
     private void loginOnServer(){
         String username = usernameField.getText().trim();
         if(username.equals("")){
-            usernameCommentLabel.setText(bundlesManager.getValue("EmptyUsername"));
+            usernameCommentLabel.setText("EmptyUsername");
         }
         else{
             String password = new String(passwordField.getPassword());
@@ -126,7 +123,7 @@ public class LoginFrame extends JFrame {
             try {
                 MusicBandResponse response = connection.sendCommand("login");
                 if(response.status == ResponseStatus.FAIL){
-                    serverResponseLabel.setText(bundlesManager.getValue("AuthorizationFail"));
+                    serverResponseLabel.setText("AuthorizationFail");
                 }
                 else{
                     setVisible(false);

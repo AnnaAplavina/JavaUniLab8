@@ -14,11 +14,11 @@ public class ServerMain {
     public static void main(String[] args) {
         try {
             System.out.println(LocalDateTime.now());
-            String dbName = args[0];
-            String userName = args[1];
-            String pass = args[2];
-            String bandsTable = args[3];
-            String usersTable = args[4];
+            String dbName = "music_band_db";
+            String userName = "user";
+            String pass = "password";
+            String bandsTable = "bands";
+            String usersTable = "users";
             MusicBandDao musicBandDao = new MusicBandDao(dbName,
                     userName, pass, bandsTable);
             UserDao userDao = new UserDao(dbName,

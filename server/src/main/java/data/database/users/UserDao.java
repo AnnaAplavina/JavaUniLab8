@@ -15,19 +15,17 @@ public class UserDao {
     private final Connection connection;
 
     public UserDao(String url, String login, String password, String tableName) throws DaoInitializationException {
-        try{
+        try {
             Class.forName("org.postgresql.Driver");
-        }
-        catch (ClassNotFoundException ex){
+        } catch (ClassNotFoundException ex) {
             logger.info("Could not load the driver \n" + ex.getMessage());
             throw new DaoInitializationException("Could not load the driver \n" + ex.getMessage());
         }
-        try{
+        try {
             this.tableName = tableName;
-            connection = DriverManager.getConnection(url, login, password);
+            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + url, login, password);
             createTableIfNotExists();
-        }
-        catch (SQLException ex){
+        } catch (SQLException ex) {
             logger.info("Could not initialize MusicBandDao \n" + ex.getMessage());
             throw new DaoInitializationException("Could not initialize MusicBandDao \n" + ex.getMessage());
         }
@@ -39,17 +37,16 @@ public class UserDao {
             String query = "SELECT * FROM " + tableName;
             ResultSet resultSet = statement.executeQuery(query);
             List<User> users = new ArrayList<>();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 String username = resultSet.getString("username");
                 String encryptedPass = resultSet.getString("encrypted_pass");
                 User user = new User(username, encryptedPass);
                 users.add(user);
             }
             return users;
-        }
-        catch (SQLException ex){
+        } catch (SQLException ex) {
             logger.info("Could not retrieve users from table " + tableName + ex.getMessage());
-            throw new  QueryExecutionException("Could not retrieve users from table " + tableName + ex.getMessage());
+            throw new QueryExecutionException("Could not retrieve users from table " + tableName + ex.getMessage());
         }
     }
 
@@ -63,8 +60,7 @@ public class UserDao {
             preparedStatement.setString(2, user.getEncryptedPass());
             preparedStatement.executeUpdate();
             logger.info("Added new user to the table " + tableName);
-        }
-        catch (SQLException ex){
+        } catch (SQLException ex) {
             logger.info("Could not add user to database " + ex.getMessage());
             throw new QueryExecutionException("Could not add user to database " + ex.getMessage());
         }
